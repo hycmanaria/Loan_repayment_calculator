@@ -4,12 +4,17 @@
 
 ## 🔄 Next Session - Start Here
 
-**Last session:** 2026-02-25 (Session 8)
-**Context:** All features complete + UI polished. Pin for Comparison system fully wired (hash encode/decode, named scenario persistence). Copy results link moved to comparison card. Ready to deploy.
+**Last session:** 2026-02-25 (Session 9)
+**Context:** FAQ structured data + Pay Off By Date (reverse calculator) added. App is deployed (`main` branch, ahead of origin by 1). Ready to push and verify in production.
 
 ### Pending Tasks
-- [ ] Deploy: `git init` → push GitHub → connect Cloudflare Pages → DNS CNAME `payoff`
+- [ ] Push to GitHub: `git push origin main`
+- [ ] Validate FAQ schema at https://search.google.com/test/rich-results
 - [ ] Create `og-image.png` (screenshot `og-image.html` at 1200×630)
+
+### Key Files to Reference
+- `index.html` — full app (~2800+ lines), all CSS + JS inline
+- `PROJECT_STATE.md` — all features ✅
 
 ### Key Files to Reference
 - `index.html` — full app (~2650 lines), all CSS + JS inline
@@ -25,6 +30,32 @@
 - **Named scenarios:** stored in `localStorage` key `payoff_scenarios` as `[{name, hash}]` — capped at 5
 - **"With Extra" column header:** dynamic — shows `scenarioLabel()` output (e.g. "+$600/mo") when extras active; resets to "With Extra" when cleared
 - **Copy results link:** lives in `.copy-results-bar` div above the comparison table (inside `#summaryCard`), not in the header
+
+---
+
+## Session: 2026-02-25 (Session 9) - FAQ Schema + Pay Off By Date
+
+### What Was Done
+- **FAQ structured data** — Added second `<script type="application/ld+json">` block with `FAQPage` schema (5 Q&As targeting real search queries). Eligible for Google rich results / featured snippets.
+- **Pay Off By Date (reverse calculator)** — New field at bottom of inputs card: two dropdowns (Month/Year), live result message, Apply button. User picks a target payoff date and instantly sees the extra monthly payment required. Apply populates the Extra Payment field and triggers recalc.
+
+### Files Modified
+- `index.html`:
+  - Head: Added `FAQPage` JSON-LD block after existing `WebApplication` schema (5 Q&As)
+  - CSS: Added `.target-date-row`, `.target-result`, `.target-extra`, `.target-on-track`, `#targetApplyBtn`, `#targetApplyBtn:hover` rules
+  - HTML: Added `#targetDateField` div with `#targetMonth`, `#targetYear` selects and `#targetResult` with `aria-live="polite"`, `#targetMsg`, `#targetApplyBtn`
+  - JS: Added `var computeTargetDate = null` module-level var; added `if (computeTargetDate) computeTargetDate()` at end of `recalc()`; added Pay Off By Date IIFE after start date IIFE
+
+### Decisions Made
+- `computeTargetDate` is module-scoped so `recalc()` can call it without coupling the IIFE to `recalc`'s internals
+- Apply button is always in DOM (no innerHTML re-injection) so listener never needs re-attachment
+- `pendingExtra` is a closure var so Apply always uses the most recently computed value
+- Year range: `curYear-1` to `curYear+40` — wide enough for any loan start date
+
+### Open Items
+- [ ] Push to GitHub: `git push origin main`
+- [ ] Validate FAQ schema at https://search.google.com/test/rich-results
+- [ ] Create `og-image.png` (screenshot `og-image.html` at 1200×630)
 
 ---
 

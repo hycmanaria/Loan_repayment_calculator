@@ -1,8 +1,8 @@
 # PROJECT_STATE — Loan Payoff Calculator
 
-**Status:** Active — all features complete + UI polished, pending deploy
-**URL (planned):** https://payoff.saltnfork.com
-**Last Updated:** 2026-02-25 (Session 8)
+**Status:** Active — deployed, pending push to origin
+**URL:** https://payoff.saltnfork.com
+**Last Updated:** 2026-02-25 (Session 9)
 
 ---
 
@@ -60,6 +60,8 @@
 | **Session 8 — Copy results link (moved to comparison card)** | ✅ Done |
 | **Session 8 — Your Loan ⓘ tooltip (replaced explanation paragraph)** | ✅ Done |
 | **Session 8 — Bi-weekly gap fix** | ✅ Done |
+| **Session 9 — FAQ structured data (FAQPage JSON-LD, 5 Q&As)** | ✅ Done |
+| **Session 9 — Pay Off By Date (reverse calculator)** | ✅ Done |
 
 ---
 

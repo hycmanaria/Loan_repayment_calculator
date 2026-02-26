@@ -1,14 +1,15 @@
 {
   "name": "Loan Payoff Calculator",
-  "description": "Single-file loan repayment calculator with extra payment comparison, amortization schedule, canvas chart, chart tooltips, presets, scenario comparison, refinance calculator, named scenario save/load, and print stylesheet.",
+  "description": "Single-file loan repayment calculator with extra payment comparison, amortization schedule, canvas chart, chart tooltips, presets, scenario comparison, refinance calculator, named scenario save/load, FAQ structured data, and Pay Off By Date reverse calculator.",
   "status": "active",
   "priority": "medium",
   "lastUpdated": "2026-02-25",
-  "lastSession": 8,
-  "currentFocus": "UI polish complete. Pin for Comparison fully wired (URL hash encode/decode, named scenario persistence). Copy results link moved to comparison card. Explanation paragraph replaced with ⓘ tooltip. Bi-weekly gap fixed. Ready to deploy.",
+  "lastSession": 9,
+  "currentFocus": "FAQ schema (FAQPage JSON-LD) and Pay Off By Date reverse calculator added. Committed to main, pending push to origin.",
   "todos": [
-    { "id": 1, "text": "Deploy to payoff.saltnfork.com (git init → GitHub → Cloudflare Pages → DNS)", "done": false },
-    { "id": 2, "text": "Create og-image.png (screenshot og-image.html at 1200×630)", "done": false }
+    { "id": 1, "text": "Push to GitHub: git push origin main", "done": false },
+    { "id": 2, "text": "Validate FAQ schema at search.google.com/test/rich-results", "done": false },
+    { "id": 3, "text": "Create og-image.png (screenshot og-image.html at 1200×630)", "done": false }
   ],
   "notes": "Single .html file, no dependencies. All CSS and JS inline. Currency via Intl.NumberFormat + navigator.language detection."
 }
