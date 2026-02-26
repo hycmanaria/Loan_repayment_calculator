@@ -5,12 +5,10 @@
 ## 🔄 Next Session - Start Here
 
 **Last session:** 2026-02-25 (Session 9)
-**Context:** FAQ structured data + Pay Off By Date (reverse calculator) added. App is deployed (`main` branch, ahead of origin by 1). Ready to push and verify in production.
+**Context:** FAQ structured data + Pay Off By Date (reverse calculator) added and pushed to main. og-image.png already created.
 
 ### Pending Tasks
-- [ ] Push to GitHub: `git push origin main`
 - [ ] Validate FAQ schema at https://search.google.com/test/rich-results
-- [ ] Create `og-image.png` (screenshot `og-image.html` at 1200×630)
 
 ### Key Files to Reference
 - `index.html` — full app (~2800+ lines), all CSS + JS inline
@@ -53,9 +51,7 @@
 - Year range: `curYear-1` to `curYear+40` — wide enough for any loan start date
 
 ### Open Items
-- [ ] Push to GitHub: `git push origin main`
 - [ ] Validate FAQ schema at https://search.google.com/test/rich-results
-- [ ] Create `og-image.png` (screenshot `og-image.html` at 1200×630)
 
 ---
 

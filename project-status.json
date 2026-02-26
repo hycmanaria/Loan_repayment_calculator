@@ -7,9 +7,7 @@
   "lastSession": 9,
   "currentFocus": "FAQ schema (FAQPage JSON-LD) and Pay Off By Date reverse calculator added. Committed to main, pending push to origin.",
   "todos": [
-    { "id": 1, "text": "Push to GitHub: git push origin main", "done": false },
-    { "id": 2, "text": "Validate FAQ schema at search.google.com/test/rich-results", "done": false },
-    { "id": 3, "text": "Create og-image.png (screenshot og-image.html at 1200×630)", "done": false }
+    { "id": 1, "text": "Validate FAQ schema at search.google.com/test/rich-results", "done": false }
   ],
   "notes": "Single .html file, no dependencies. All CSS and JS inline. Currency via Intl.NumberFormat + navigator.language detection."
 }
