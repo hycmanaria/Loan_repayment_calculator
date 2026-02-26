@@ -1,0 +1,2399 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <script>(function(){var t=localStorage.getItem('theme')||(matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light');document.documentElement.setAttribute('data-theme',t)})();</script>
+  <style>html[data-theme="dark"]{background:#0f172a}</style>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#3b82f6">
+  <title>Loan Payoff Calculator — See How Extra Payments Save You Money</title>
+  <meta name="description" content="Enter your loan details and see exactly how much interest you save and how many months sooner you'll be debt-free by making extra payments. Free, instant, no sign-up.">
+  <meta property="og:title" content="Loan Payoff Calculator — See How Extra Payments Save You Money">
+  <meta property="og:description" content="Enter your loan details and see exactly how much interest you save and how many months sooner you'll be debt-free by making extra payments. Free, instant, no sign-up.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://payoff.saltnfork.com">
+  <meta property="og:site_name" content="Salt n' Fork">
+  <meta property="og:image" content="https://payoff.saltnfork.com/og-image.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:image:type" content="image/png">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Loan Payoff Calculator — See How Extra Payments Save You Money">
+  <meta name="twitter:description" content="Enter your loan details and see exactly how much interest you save and how many months sooner you'll be debt-free by making extra payments. Free, instant, no sign-up.">
+  <meta name="twitter:image" content="https://payoff.saltnfork.com/og-image.png">
+  <meta name="robots" content="index, follow">
+  <meta name="author" content="Salt n' Fork">
+  <link rel="canonical" href="https://payoff.saltnfork.com">
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+  <link rel="manifest" href="/manifest.json">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebApplication",
+    "name": "Loan Payoff Calculator",
+    "url": "https://payoff.saltnfork.com",
+    "description": "See exactly how extra monthly payments reduce your loan term and total interest paid.",
+    "applicationCategory": "FinanceApplication",
+    "operatingSystem": "Any",
+    "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
+    "creator": { "@type": "Organization", "name": "Salt n' Fork", "url": "https://saltnfork.com" },
+    "featureList": ["Amortization schedule", "Extra payment comparison", "Balance chart", "Shareable URLs"]
+  }
+  </script>
+
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --primary: #3b82f6;
+      --primary-dark: #2563eb;
+      --primary-bg: #eff6ff;
+      --success: #10b981;
+      --success-bg: #ecfdf5;
+      --success-dark: #059669;
+      --warn-row: #fefce8;
+      --warn-border: #fde047;
+      --bg: #f1f5f9;
+      --surface: #ffffff;
+      --border: #e2e8f0;
+      --border-strong: #cbd5e1;
+      --text: #1e293b;
+      --text-2: #475569;
+      --text-3: #64748b;
+      --radius: 12px;
+      --radius-sm: 8px;
+      --shadow: 0 1px 3px rgba(0,0,0,0.07), 0 1px 2px rgba(0,0,0,0.05);
+      --shadow-md: 0 4px 12px rgba(0,0,0,0.08);
+    }
+
+    [data-theme="dark"] {
+      --bg: #0f172a;
+      --surface: #1e293b;
+      --border: #334155;
+      --border-strong: #475569;
+      --text: #f1f5f9;
+      --text-2: #cbd5e1;
+      --text-3: #94a3b8;
+      --primary-bg: #1e3a5f;
+      --success-bg: #064e3b;
+      --warn-row: #451a03;
+      --warn-border: #92400e;
+      --shadow: 0 1px 3px rgba(0,0,0,0.3), 0 1px 2px rgba(0,0,0,0.2);
+      --shadow-md: 0 4px 12px rgba(0,0,0,0.4);
+    }
+    [data-theme="dark"] .n-input.overridden {
+      border-color: #b45309;
+      background: #1c1208;
+    }
+    [data-theme="dark"] .toggle-btn:hover { background: var(--bg); }
+    [data-theme="dark"] .error-msg {
+      color: #fca5a5;
+      background: #1f0707;
+      border-color: #7f1d1d;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      font-size: 15px;
+      line-height: 1.5;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* ── Header ── */
+    header {
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      padding: 0 24px;
+    }
+    .header-inner {
+      max-width: 1180px;
+      margin: 0 auto;
+      padding: 14px 0;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    h1 {
+      font-size: 1.0625rem;
+      font-weight: 700;
+      letter-spacing: -0.01em;
+      color: var(--text);
+    }
+    h1 span { color: var(--primary); }
+    .header-sub {
+      font-size: 0.8125rem;
+      color: var(--text-3);
+      font-weight: 400;
+    }
+
+    /* ── Main layout ── */
+    main {
+      flex: 1;
+      max-width: 1180px;
+      margin: 0 auto;
+      padding: 24px 20px;
+      width: 100%;
+      display: grid;
+      grid-template-columns: 360px 1fr;
+      gap: 20px;
+      align-items: start;
+    }
+
+    /* ── Card ── */
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      overflow: hidden;
+    }
+    .card-head {
+      padding: 13px 20px;
+      border-bottom: 1px solid var(--border);
+      font-size: 0.75rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--text-3);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .card-body { padding: 20px; }
+
+    /* ── Inputs ── */
+    .inputs-body {
+      display: flex;
+      flex-direction: column;
+      gap: 22px;
+      padding: 20px;
+    }
+
+    .field { display: flex; flex-direction: column; gap: 7px; }
+
+    .field-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    label {
+      font-size: 0.875rem;
+      font-weight: 500;
+      color: var(--text);
+    }
+
+    .field-val {
+      font-size: 0.8125rem;
+      font-weight: 600;
+      color: var(--primary);
+      font-variant-numeric: tabular-nums;
+      letter-spacing: -0.01em;
+    }
+
+    .field-val.rate::after { content: '%'; }
+
+    .input-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    /* Number input */
+    .n-input {
+      width: 112px;
+      flex-shrink: 0;
+      padding: 8px 11px;
+      border: 1.5px solid var(--border-strong);
+      border-radius: var(--radius-sm);
+      font-size: 0.9375rem;
+      font-family: inherit;
+      font-weight: 500;
+      color: var(--text);
+      background: var(--surface);
+      transition: border-color 0.15s, box-shadow 0.15s, background 0.15s;
+      -moz-appearance: textfield;
+      appearance: textfield;
+    }
+    .n-input::-webkit-outer-spin-button,
+    .n-input::-webkit-inner-spin-button { -webkit-appearance: none; }
+    .n-input:focus-visible {
+      outline: none;
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(59,130,246,0.14);
+    }
+    .n-input.overridden {
+      border-color: #f59e0b;
+      background: #fffbeb;
+    }
+
+    /* Monthly payment — full width input, no slider */
+    .payment-row { display: flex; align-items: center; gap: 10px; }
+    #payment { width: 140px; }
+    .reset-btn {
+      font-size: 0.75rem;
+      font-weight: 500;
+      color: #d97706;
+      background: none;
+      border: none;
+      cursor: pointer;
+      font-family: inherit;
+      padding: 0;
+      text-decoration: none;
+      white-space: nowrap;
+      visibility: hidden;
+    }
+    .reset-btn:hover { text-decoration: underline; }
+    .reset-btn.visible { visibility: visible; }
+
+    /* Slider */
+    input[type="range"] {
+      flex: 1;
+      min-width: 0;
+      -webkit-appearance: none;
+      appearance: none;
+      cursor: pointer;
+      background: transparent;
+      padding: 14px 0;
+    }
+    input[type="range"]::-webkit-slider-runnable-track {
+      width: 100%;
+      height: 6px;
+      border-radius: 3px;
+      background: linear-gradient(
+        to right,
+        var(--primary) var(--pct, 0%),
+        #94a3b8 var(--pct, 0%)
+      );
+    }
+    [data-theme="dark"] input[type="range"]::-webkit-slider-runnable-track {
+      background: linear-gradient(
+        to right,
+        var(--primary) var(--pct, 0%),
+        #3a4a60 var(--pct, 0%)
+      );
+    }
+    input[type="range"]::-moz-range-track {
+      height: 6px;
+      border-radius: 3px;
+      background: #94a3b8;
+    }
+    [data-theme="dark"] input[type="range"]::-moz-range-track {
+      background: #3a4a60;
+    }
+    input[type="range"]::-moz-range-progress {
+      height: 6px;
+      border-radius: 3px;
+      background: var(--primary);
+    }
+    input[type="range"]::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      background: var(--primary);
+      border: 2.5px solid white;
+      box-shadow: 0 1px 4px rgba(59,130,246,0.35);
+      cursor: pointer;
+      transition: transform 0.1s, box-shadow 0.1s;
+      margin-top: -7px; /* center 20px thumb on 6px track: (20-6)/2 */
+    }
+    input[type="range"]::-webkit-slider-thumb:hover,
+    input[type="range"]:active::-webkit-slider-thumb {
+      transform: scale(1.15);
+      box-shadow: 0 2px 8px rgba(59,130,246,0.45);
+    }
+    input[type="range"]::-moz-range-thumb {
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      background: var(--primary);
+      border: 2.5px solid white;
+      box-shadow: 0 1px 4px rgba(59,130,246,0.35);
+      cursor: pointer;
+    }
+    input[type="range"]::-moz-range-track {
+      height: 5px;
+      border-radius: 3px;
+      background: transparent; /* handled by element background */
+    }
+    input[type="range"]:focus-visible {
+      outline: 2px solid var(--primary);
+      outline-offset: 3px;
+      border-radius: 3px;
+    }
+
+    /* ── Results ── */
+    .results {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      min-width: 0; /* prevent grid cell from overflowing on narrow viewports */
+    }
+
+    /* Comparison table */
+    .cmp-table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+    .cmp-table th {
+      padding: 12px 16px;
+      text-align: right;
+      font-size: 0.75rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--text-3);
+      border-bottom: 1px solid var(--border);
+    }
+    .cmp-table th:first-child { text-align: left; }
+    .cmp-table th.extra-head { color: var(--success-dark); }
+
+    .cmp-table td {
+      padding: 11px 16px;
+      text-align: right;
+      border-bottom: 1px solid var(--border);
+      font-size: 0.9375rem;
+      font-variant-numeric: tabular-nums;
+      vertical-align: top;
+    }
+    .cmp-table td:first-child {
+      text-align: left;
+      font-size: 0.8125rem;
+      font-weight: 500;
+      color: var(--text-2);
+    }
+    .cmp-table td.current { font-weight: 500; }
+    .cmp-table td.extra {
+      color: var(--success-dark);
+      font-weight: 600;
+    }
+    .cmp-table tr:last-child td { border-bottom: none; }
+    .save-sub {
+      display: block;
+      font-size: 0.7rem;
+      font-weight: 600;
+      color: var(--success-dark);
+      margin-top: 2px;
+      letter-spacing: 0.01em;
+    }
+    .cmp-table th.saved-head { color: #7c3aed; }
+    [data-theme="dark"] .cmp-table th.saved-head { color: #a78bfa; }
+
+    .copy-results-bar {
+      display: flex;
+      justify-content: flex-end;
+      padding: 10px 16px 0;
+    }
+    #copyLinkBtn {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      background: none;
+      border: none;
+      cursor: pointer;
+      font-size: 0.75rem;
+      color: var(--text-3);
+      padding: 2px 4px;
+      border-radius: 4px;
+      transition: color 0.15s;
+    }
+    #copyLinkBtn:hover { color: var(--primary); }
+    #copyLinkBtn .copy-label { transition: color 0.15s; }
+    .cmp-table td.saved { color: #7c3aed; font-weight: 600; }
+    [data-theme="dark"] .cmp-table td.saved { color: #a78bfa; }
+
+    /* Scenario bar */
+    .scenario-bar {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 20px 14px;
+      flex-wrap: wrap;
+    }
+    .save-scenario-btn {
+      padding: 5px 12px;
+      font-size: 0.8125rem;
+      font-weight: 600;
+      font-family: inherit;
+      border: 1.5px solid var(--border-strong);
+      border-radius: var(--radius-sm);
+      background: transparent;
+      color: var(--text-2);
+      cursor: pointer;
+      transition: border-color 0.15s, color 0.15s;
+    }
+    .save-scenario-btn:not(:disabled):hover {
+      border-color: #7c3aed;
+      color: #7c3aed;
+    }
+    [data-theme="dark"] .save-scenario-btn:not(:disabled):hover {
+      border-color: #a78bfa;
+      color: #a78bfa;
+    }
+    .save-scenario-btn:disabled { opacity: 0.4; cursor: default; }
+    #savedScenarioLabel {
+      font-size: 0.8125rem;
+      color: var(--text-2);
+    }
+    #savedScenarioLabel strong { color: #7c3aed; }
+    [data-theme="dark"] #savedScenarioLabel strong { color: #a78bfa; }
+    .clear-scenario-btn {
+      background: none;
+      border: none;
+      cursor: pointer;
+      font-size: 0.75rem;
+      color: var(--text-3);
+      padding: 0 0 0 4px;
+      line-height: 1;
+    }
+    .clear-scenario-btn:hover { color: var(--text); }
+
+    /* Callout */
+    .callout-body { padding: 14px 20px 0; }
+    .callout-text {
+      font-size: 0.9rem;
+      line-height: 1.65;
+      color: var(--text);
+      user-select: text;
+    }
+    .callout-text.muted {
+      color: var(--text-3);
+      font-style: italic;
+    }
+    .callout-text strong { color: var(--success-dark); font-weight: 700; }
+
+    /* Toggle button */
+    .toggle-btn {
+      width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 13px 20px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      font-size: 0.875rem;
+      font-weight: 600;
+      color: var(--text-2);
+      cursor: pointer;
+      font-family: inherit;
+      transition: background 0.15s, color 0.15s;
+      box-shadow: var(--shadow);
+    }
+    .toggle-btn:hover { background: #f8fafc; color: var(--text); }
+    .toggle-btn .chevron { transition: transform 0.22s ease; flex-shrink: 0; }
+    .toggle-btn[aria-expanded="true"] .chevron { transform: rotate(180deg); }
+
+    /* Amortization table */
+    .table-wrap {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      overflow-x: auto;
+      box-shadow: var(--shadow);
+    }
+    .amort-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.8125rem;
+      font-variant-numeric: tabular-nums;
+      white-space: nowrap;
+    }
+    .amort-table thead th {
+      padding: 10px 14px;
+      text-align: right;
+      font-weight: 600;
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--text-3);
+      background: var(--bg);
+      border-bottom: 1px solid var(--border);
+    }
+    .amort-table thead th:first-child { text-align: left; }
+    .amort-table tbody td {
+      padding: 8px 14px;
+      text-align: right;
+      border-bottom: 1px solid var(--border);
+      color: var(--text);
+    }
+    .amort-table tbody td:first-child {
+      text-align: left;
+      color: var(--text-2);
+      font-weight: 500;
+    }
+    .amort-table tbody tr:last-child td { border-bottom: none; }
+    .amort-table tbody tr.early-payoff {
+      background: var(--warn-row);
+      border-top: 2px solid var(--warn-border);
+      border-bottom: 2px solid var(--warn-border);
+    }
+    .amort-table tbody tr.early-payoff td { font-weight: 700; }
+    .amort-table tbody tr.dimmed td { opacity: 0.3; }
+
+    /* Error state */
+    .error-msg {
+      padding: 14px 20px;
+      font-size: 0.875rem;
+      color: #dc2626;
+      background: #fff7f7;
+      border-radius: var(--radius);
+      border: 1px solid #fecaca;
+    }
+
+    /* ── Footer ── */
+    footer {
+      text-align: center;
+      padding: 22px 20px 14px;
+      font-size: 0.8rem;
+      color: var(--text-3);
+      border-top: 1px solid var(--border);
+      margin-top: 8px;
+    }
+    footer p { margin: 0 0 0.2rem 0; }
+    footer p:last-child { margin-bottom: 0; }
+    footer a { color: var(--text-3); text-decoration: none; }
+    footer a:hover { color: var(--primary); text-decoration: underline; }
+
+    /* ── Responsive ── */
+    @media (max-width: 780px) {
+      main {
+        grid-template-columns: 1fr;
+        padding: 14px 14px 20px;
+        gap: 14px;
+      }
+      .header-sub { display: none; }
+    }
+
+    @media (max-width: 420px) {
+      .n-input { width: 96px; font-size: 0.875rem; }
+      .cmp-table th { padding: 10px 8px; font-size: 0.6875rem; }
+      .cmp-table td { padding: 9px 8px; font-size: 0.8125rem; }
+    }
+
+    /* Accessibility */
+    .sr-only {
+      position: absolute; width: 1px; height: 1px;
+      padding: 0; margin: -1px; overflow: hidden;
+      clip: rect(0,0,0,0); border: 0;
+    }
+
+    /* How it works — card-like but NO overflow:hidden (would clip <details> expansion) */
+    .how-it-works {
+      grid-column: 1 / -1;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 12px 20px;
+      font-size: 0.875rem;
+      color: var(--text-2);
+      line-height: 1.65;
+    }
+    .how-it-works summary::-webkit-details-marker { display: none; }
+    .how-it-works summary::marker { display: none; }
+    .how-it-works-text {
+      font-size: 0.8125rem;
+      color: var(--text-3);
+      margin: 12px 0 0;
+      line-height: 1.55;
+    }
+
+    /* Scroll buttons */
+    .scroll-btns {
+      position: fixed;
+      bottom: 24px;
+      right: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      z-index: 100;
+    }
+    .scroll-btn {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      border: none;
+      background: var(--primary);
+      color: #fff;
+      font-size: 1rem;
+      cursor: pointer;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.2s;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.18);
+    }
+    #scrollBotBtn { background: var(--success); }
+    .scroll-btn.visible {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    /* Dark mode — theme toggle button */
+    .theme-toggle {
+      margin-left: auto;
+      background: none;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 5px 10px;
+      cursor: pointer;
+      font-size: 0.8rem;
+      color: var(--text-2);
+      font-family: inherit;
+      line-height: 1;
+      transition: border-color 0.15s, color 0.15s;
+    }
+    .theme-toggle:hover { border-color: var(--border-strong); color: var(--text); }
+
+    /* ── Table actions row (toggle + CSV) ── */
+    .table-actions { display: flex; gap: 8px; align-items: stretch; }
+    .table-actions .toggle-btn { flex: 1; width: auto; }
+    .csv-btn {
+      flex-shrink: 0;
+      padding: 0 16px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: var(--text-2);
+      cursor: pointer;
+      font-family: inherit;
+      white-space: nowrap;
+      box-shadow: var(--shadow);
+      transition: background 0.15s, color 0.15s;
+    }
+    .csv-btn:hover { background: var(--bg); color: var(--text); }
+
+    /* ── Field tooltip button ── */
+    .tip {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 15px;
+      height: 15px;
+      border-radius: 50%;
+      background: var(--border);
+      border: none;
+      font-size: 0.6rem;
+      font-weight: 700;
+      color: var(--text-3);
+      cursor: default;
+      vertical-align: middle;
+      margin-left: 4px;
+      font-family: inherit;
+      padding: 0;
+      flex-shrink: 0;
+    }
+    .tip:focus-visible { outline: 2px solid var(--primary); outline-offset: 1px; }
+
+    /* ── Tooltip popup (JS-positioned, fixed) ── */
+    #tipBox {
+      position: fixed;
+      background: var(--text);
+      color: var(--surface);
+      padding: 8px 12px;
+      border-radius: 8px;
+      font-size: 0.78rem;
+      line-height: 1.5;
+      max-width: 240px;
+      z-index: 200;
+      pointer-events: none;
+      box-shadow: var(--shadow-md);
+      white-space: pre-line;
+    }
+
+    /* ── Start date selects ── */
+    .date-row { display: flex; gap: 8px; }
+    .date-select {
+      flex: 1;
+      min-width: 0;
+      padding: 8px 28px 8px 10px;
+      border: 1.5px solid var(--border-strong);
+      border-radius: var(--radius-sm);
+      font-size: 0.875rem;
+      font-family: inherit;
+      font-weight: 500;
+      color: var(--text);
+      background: var(--surface);
+      cursor: pointer;
+      appearance: none;
+      -webkit-appearance: none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%2364748b' stroke-width='2.5'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 9px center;
+      transition: border-color 0.15s, box-shadow 0.15s;
+    }
+    .date-select:focus-visible {
+      outline: none;
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(59,130,246,0.14);
+    }
+    [data-theme="dark"] .date-select {
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%2394a3b8' stroke-width='2.5'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");
+    }
+
+    /* ── Extra payment frequency selector ── */
+    .freq-row {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      font-size: 0.8125rem;
+      color: var(--text-3);
+    }
+    .freq-select {
+      padding: 4px 24px 4px 8px;
+      border: 1.5px solid var(--border-strong);
+      border-radius: var(--radius-sm);
+      font-size: 0.8125rem;
+      font-family: inherit;
+      font-weight: 500;
+      color: var(--text);
+      background: var(--surface);
+      cursor: pointer;
+      appearance: none;
+      -webkit-appearance: none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='10' viewBox='0 0 24 24' fill='none' stroke='%2364748b' stroke-width='2.5'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 7px center;
+      transition: border-color 0.15s, box-shadow 0.15s;
+    }
+    .freq-select:focus-visible {
+      outline: none;
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(59,130,246,0.14);
+    }
+    [data-theme="dark"] .freq-select {
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='10' viewBox='0 0 24 24' fill='none' stroke='%2394a3b8' stroke-width='2.5'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");
+    }
+
+    /* ── Bi-weekly toggle switch ── */
+    .biweekly-btn {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 9px 14px;
+      background: var(--bg);
+      border: 1.5px solid var(--border-strong);
+      border-radius: var(--radius-sm);
+      font-size: 0.875rem;
+      font-weight: 500;
+      font-family: inherit;
+      color: var(--text-2);
+      cursor: pointer;
+      width: 100%;
+      text-align: left;
+      transition: border-color 0.15s, background 0.15s;
+    }
+    .biweekly-btn[aria-checked="true"] {
+      border-color: var(--primary);
+      background: var(--primary-bg);
+      color: var(--text);
+    }
+    .biweekly-track {
+      flex-shrink: 0;
+      width: 36px;
+      height: 20px;
+      background: var(--border-strong);
+      border-radius: 10px;
+      position: relative;
+      transition: background 0.15s;
+    }
+    .biweekly-btn[aria-checked="true"] .biweekly-track { background: var(--primary); }
+    .biweekly-thumb {
+      position: absolute;
+      top: 2px;
+      left: 2px;
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      background: white;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+      transition: transform 0.15s;
+    }
+    .biweekly-btn[aria-checked="true"] .biweekly-thumb { transform: translateX(16px); }
+    .biweekly-sub {
+      font-size: 0.75rem;
+      color: var(--text-3);
+      margin-top: 4px;
+    }
+
+    /* ── Term unit toggle ── */
+    .unit-toggle {
+      display: flex;
+      border: 1.5px solid var(--border-strong);
+      border-radius: var(--radius-sm);
+      overflow: hidden;
+    }
+    .unit-btn {
+      padding: 2px 7px;
+      font-size: 0.72rem;
+      font-weight: 600;
+      background: none;
+      border: none;
+      cursor: pointer;
+      color: var(--text-3);
+      font-family: inherit;
+      transition: background 0.12s, color 0.12s;
+    }
+    .unit-btn.active { background: var(--primary); color: #fff; }
+
+    /* ── Lump sum month row ── */
+    .lump-month-row {
+      display: none;
+      align-items: center;
+      gap: 10px;
+      margin-top: 8px;
+    }
+    .lump-month-row label {
+      font-size: 0.8125rem;
+      color: var(--text-2);
+      white-space: nowrap;
+      font-weight: 400;
+    }
+    .lump-month-row .n-input { width: 90px; }
+
+    /* Reduced motion */
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { transition: none !important; animation: none !important; }
+      html { scroll-behavior: auto; }
+    }
+
+    /* ── Details summary ── */
+    .details-summary {
+      cursor: pointer;
+      font-weight: 600;
+      color: var(--text);
+      list-style: none;
+      user-select: none;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .details-summary::before {
+      content: '▶';
+      font-size: 0.6rem;
+      color: var(--text-3);
+      transition: transform 0.15s;
+      display: inline-block;
+    }
+    details[open] > .details-summary::before { transform: rotate(90deg); }
+
+    /* ── Saved scenarios ── */
+    .scenarios-body { padding-top: 10px; }
+    .scenario-save-row { display: flex; gap: 8px; margin-bottom: 12px; }
+    .scenario-name-input { flex: 1; min-width: 0; padding: 7px 10px; }
+    .save-named-btn {
+      padding: 7px 14px;
+      font-size: 0.8125rem;
+      font-weight: 600;
+      font-family: inherit;
+      border: 1.5px solid var(--primary);
+      border-radius: var(--radius-sm);
+      background: var(--primary);
+      color: #fff;
+      cursor: pointer;
+      white-space: nowrap;
+      transition: opacity 0.15s;
+    }
+    .save-named-btn:hover { opacity: 0.85; }
+    .scenario-list {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    .scenario-list li {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 10px;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      font-size: 0.8125rem;
+    }
+    .scenario-list .s-name { flex: 1; min-width: 0; font-weight: 500; color: var(--text); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .scenario-list .s-load {
+      padding: 3px 9px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      font-family: inherit;
+      border: 1px solid var(--primary);
+      border-radius: 4px;
+      background: transparent;
+      color: var(--primary);
+      cursor: pointer;
+    }
+    .scenario-list .s-load:hover { background: var(--primary-bg); }
+    .scenario-list .s-del {
+      background: none;
+      border: none;
+      cursor: pointer;
+      font-size: 0.75rem;
+      color: var(--text-3);
+      padding: 0;
+      line-height: 1;
+    }
+    .scenario-list .s-del:hover { color: #ef4444; }
+    .scenario-list-empty { font-size: 0.8125rem; color: var(--text-3); font-style: italic; }
+
+    /* ── Print stylesheet ── */
+    @media print {
+      /* Hide interactive / decorative elements */
+      header .theme-toggle,
+      #copyLinkBtn,
+      input[type="range"],
+      .field-val,
+      .table-actions,
+      .callout-card .scenario-bar,
+      #savedScenariosSection,
+      .footer,
+      #tipBox,
+      .biweekly-btn,
+      .reset-btn,
+      .toggle-btn,
+      .csv-btn,
+      .scroll-btns { display: none !important; }
+
+      /* Force amortization table visible */
+      .table-wrap { display: block !important; }
+      [hidden] { display: none !important; }
+
+      /* Typography & colors */
+      body { background: #fff !important; color: #000 !important; font-size: 11pt; }
+      .card, .how-it-works { border: 1px solid #ccc !important; box-shadow: none !important; background: #fff !important; }
+      a { color: #000 !important; text-decoration: none; }
+
+      /* Table borders */
+      .cmp-table th, .cmp-table td,
+      .amort-table th, .amort-table td { border-color: #ccc !important; color: #000 !important; }
+      .cmp-table td.extra, .cmp-table th.extra-head { color: #000 !important; font-weight: 700; }
+      .cmp-table td.saved, .cmp-table th.saved-head { color: #000 !important; font-weight: 700; }
+
+      /* Avoid breaking rows */
+      tr { page-break-inside: avoid; }
+      .card { page-break-inside: avoid; }
+
+      /* Layout: stack everything single-column */
+      main { display: block !important; }
+      .card, .how-it-works { margin-bottom: 12pt; }
+      .results { display: block !important; }
+
+      /* Input summary: show as definition list */
+      .n-input { border: none !important; padding: 0 !important; font-weight: 600; }
+    }
+  </style>
+</head>
+<body>
+
+<noscript>
+  <div style="padding:40px;text-align:center;font-family:sans-serif">
+    <h2>JavaScript Required</h2>
+    <p>This calculator requires JavaScript. Please enable it in your browser settings.</p>
+  </div>
+</noscript>
+
+<header>
+  <div class="header-inner">
+    <h1>Loan Payoff <span>Calculator</span></h1>
+    <span class="header-sub">See how extra payments save you money</span>
+    <button class="theme-toggle" id="themeToggle" aria-label="Toggle dark mode">
+      <!-- sun icon (shown in dark mode) -->
+      <svg id="iconSun" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="display:none">
+        <circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
+      </svg>
+      <!-- moon icon (shown in light mode) -->
+      <svg id="iconMoon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+      </svg>
+    </button>
+  </div>
+</header>
+
+<main>
+
+  <!-- ════ LEFT: INPUTS ════ -->
+  <div class="card" id="inputsCard">
+    <div class="card-head">
+      <span>Your Loan</span>
+      <button class="tip" type="button" tabindex="0" style="text-transform:none; letter-spacing:normal; font-weight:400;"
+        data-tip="· Balance, rate &amp; term → payment calculated automatically&#10;· Add extra payments → see interest saved &amp; payoff date moved up&#10;· Pin a scenario → compare two strategies side by side">ⓘ</button>
+    </div>
+    <div class="inputs-body">
+
+      <!-- Loan Balance -->
+      <div class="field">
+        <div class="field-top">
+          <label for="balance">Loan Balance</label>
+          <span class="field-val" id="balanceVal" aria-live="polite"></span>
+        </div>
+        <div class="input-row">
+          <input type="text" inputmode="numeric" pattern="[0-9,]*" class="n-input" id="balance"
+            aria-label="Loan balance">
+          <input type="range" id="balanceSlider"
+            min="500" max="2000000" step="1000" value="20000"
+            aria-label="Loan balance slider">
+        </div>
+      </div>
+
+      <!-- Annual Interest Rate -->
+      <div class="field">
+        <div class="field-top">
+          <label for="rate">Annual Interest Rate <button class="tip" type="button" tabindex="0" data-tip="Your loan's APR — the yearly rate charged before compounding. Find it on your loan statement or offer letter.">ⓘ</button></label>
+          <span class="field-val rate" id="rateVal" aria-live="polite"></span>
+        </div>
+        <div class="input-row">
+          <input type="number" class="n-input" id="rate"
+            min="1" max="36" step="0.01" value="6.5"
+            aria-label="Annual interest rate">
+          <input type="range" id="rateSlider"
+            min="1" max="36" step="0.01" value="6.5"
+            aria-label="Interest rate slider">
+        </div>
+      </div>
+
+      <!-- Loan Term -->
+      <div class="field">
+        <div class="field-top">
+          <div style="display:flex; align-items:center; gap:8px;">
+            <label for="term">Loan Term</label>
+            <span class="unit-toggle" id="termUnitToggle" role="group" aria-label="Term unit">
+              <button class="unit-btn active" data-unit="months" type="button">mo</button>
+              <button class="unit-btn" data-unit="years" type="button">yr</button>
+            </span>
+            <button class="tip" type="button" tabindex="0"
+              data-tip="The original length of your loan. Use the full original term, not remaining term. Toggle between months and years.">ⓘ</button>
+          </div>
+          <span class="field-val" id="termVal" aria-live="polite"></span>
+        </div>
+        <div class="input-row">
+          <input type="number" class="n-input" id="term"
+            min="6" max="360" step="1" value="60"
+            aria-label="Loan term in months">
+          <input type="range" id="termSlider"
+            min="6" max="360" step="1" value="60"
+            aria-label="Loan term slider">
+        </div>
+      </div>
+
+      <!-- Monthly Payment (no slider) -->
+      <div class="field">
+        <div class="field-top">
+          <label for="payment">Monthly Payment <button class="tip" type="button" tabindex="0" data-tip="Auto-calculated from your balance, rate, and term. Override it to model a custom payment — the field turns amber. Hit ↺ reset to return to calculated.">ⓘ</button></label>
+          <button class="reset-btn" id="resetBtn" tabindex="0"
+            aria-label="Reset to calculated payment">↺ reset</button>
+        </div>
+        <div class="payment-row">
+          <input type="number" class="n-input" id="payment"
+            min="1" step="0.01"
+            aria-label="Monthly payment amount">
+        </div>
+      </div>
+
+      <!-- Loan Start Date -->
+      <div class="field">
+        <div class="field-top">
+          <label>Loan Start Date</label>
+        </div>
+        <div class="date-row">
+          <select id="startMonth" class="date-select" aria-label="Loan start month">
+            <option value="1">January</option>
+            <option value="2">February</option>
+            <option value="3">March</option>
+            <option value="4">April</option>
+            <option value="5">May</option>
+            <option value="6">June</option>
+            <option value="7">July</option>
+            <option value="8">August</option>
+            <option value="9">September</option>
+            <option value="10">October</option>
+            <option value="11">November</option>
+            <option value="12">December</option>
+          </select>
+          <select id="startYear" class="date-select" aria-label="Loan start year">
+            <!-- Options populated by JS -->
+          </select>
+        </div>
+      </div>
+
+      <!-- Extra Payment -->
+      <div class="field">
+        <div class="field-top">
+          <label for="extra">Extra Payment <button class="tip" type="button" tabindex="0" data-tip="Amount added on top of your minimum payment each period. Goes entirely to principal, reducing your balance faster.">ⓘ</button></label>
+          <span class="field-val" id="extraVal" aria-live="polite"></span>
+        </div>
+        <div class="input-row">
+          <input type="number" class="n-input" id="extra"
+            min="0" max="25000" step="10" value="0"
+            aria-label="Extra payment amount">
+          <input type="range" id="extraSlider"
+            min="0" max="25000" step="10" value="0"
+            aria-label="Extra payment slider">
+        </div>
+        <div class="freq-row">
+          per
+          <select id="extraFreq" class="freq-select" aria-label="Extra payment frequency">
+            <option value="monthly" selected>month</option>
+            <option value="weekly">week</option>
+            <option value="daily">day</option>
+            <option value="yearly">year</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Bi-weekly payments -->
+      <div class="field">
+        <div style="display:flex; align-items:center; gap:8px;">
+          <button id="biweeklyBtn" class="biweekly-btn" role="switch" aria-checked="false" type="button">
+            <span class="biweekly-track"><span class="biweekly-thumb"></span></span>
+            Pay bi-weekly
+          </button>
+          <button class="tip" type="button" tabindex="0"
+            data-tip="Instead of one monthly payment, you split it in half and pay every 2 weeks — 26 payments/year. That's equivalent to 13 monthly payments instead of 12, paying off your loan faster at no extra monthly cost.">ⓘ</button>
+        </div>
+        <div class="biweekly-sub" id="biweeklySub"></div>
+      </div>
+
+      <!-- One-time lump sum payment -->
+      <div class="field">
+        <div class="field-top">
+          <label for="lumpSum">One-time Lump Sum Payment</label>
+        </div>
+        <div class="input-row">
+          <input type="number" class="n-input" id="lumpSum"
+            min="0" step="100" value="0"
+            aria-label="One-time lump sum payment amount">
+        </div>
+        <div class="lump-month-row" id="lumpMonthRow">
+          <label for="lumpMonth">Apply in month</label>
+          <input type="number" class="n-input" id="lumpMonth"
+            min="1" step="1" value="1"
+            aria-label="Month to apply lump sum">
+        </div>
+      </div>
+
+    </div><!-- /inputs-body -->
+  </div><!-- /card -->
+
+
+  <!-- ════ RIGHT: RESULTS ════ -->
+  <div class="results" id="results">
+
+    <!-- Comparison summary -->
+    <div class="card" id="summaryCard">
+      <div class="copy-results-bar">
+        <button id="copyLinkBtn" aria-label="Copy shareable link">
+          <svg id="iconLink" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
+          <svg id="iconCheck" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="display:none;color:#10b981"><polyline points="20 6 9 17 4 12"/></svg>
+          <span class="copy-label" id="copyLabel">Copy results link</span>
+        </button>
+      </div>
+      <table class="cmp-table" aria-label="Loan payoff comparison">
+        <thead>
+          <tr>
+            <th></th>
+            <th scope="col">Current Plan</th>
+            <th scope="col" class="extra-head" id="extraHead">With Extra</th>
+            <th scope="col" class="saved-head" id="savedHead" hidden>Saved</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Monthly Payment</td>
+            <td class="current" id="cPayment">—</td>
+            <td class="extra" id="ePayment">—</td>
+            <td class="saved" id="sPayment" hidden>—</td>
+          </tr>
+          <tr>
+            <td>Total Interest</td>
+            <td class="current" id="cInterest">—</td>
+            <td class="extra" id="eInterest">—</td>
+            <td class="saved" id="sInterest" hidden>—</td>
+          </tr>
+          <tr>
+            <td>Payoff Date</td>
+            <td class="current" id="cDate">—</td>
+            <td class="extra" id="eDate">—</td>
+            <td class="saved" id="sDate" hidden>—</td>
+          </tr>
+          <tr>
+            <td>Months to Pay Off</td>
+            <td class="current" id="cMonths">—</td>
+            <td class="extra" id="eMonths">—</td>
+            <td class="saved" id="sMonths" hidden>—</td>
+          </tr>
+          <tr>
+            <td>Total Extra Paid</td>
+            <td class="current" id="cExtraPaid">—</td>
+            <td class="extra" id="eExtraPaid">—</td>
+            <td class="saved" id="sExtraPaid" hidden>—</td>
+          </tr>
+          <tr>
+            <td>Total Paid</td>
+            <td class="current" id="cTotalPaid">—</td>
+            <td class="extra" id="eTotalPaid">—</td>
+            <td class="saved" id="sTotalPaid" hidden>—</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Callout sentence -->
+    <div class="card callout-card">
+      <div class="callout-body">
+        <p class="callout-text muted" id="callout">
+          Enter an extra payment above to see how much you save.
+        </p>
+      </div>
+      <div class="scenario-bar">
+        <button class="save-scenario-btn" id="saveScenarioBtn" disabled title="Add an extra payment first">Pin for Comparison</button>
+        <span id="savedScenarioLabel" hidden>
+          Pinned: <strong id="savedScenarioLabelText"></strong>
+          <button class="clear-scenario-btn" id="clearScenarioBtn" aria-label="Clear saved scenario">✕</button>
+        </span>
+      </div>
+    </div>
+
+    <details class="how-it-works" id="savedScenariosSection">
+      <summary class="details-summary">Saved Scenarios</summary>
+      <div class="scenarios-body">
+        <div class="scenario-save-row">
+          <input type="text" class="n-input scenario-name-input" id="scenarioNameInput" placeholder="Name this scenario…" maxlength="40" aria-label="Scenario name">
+          <button class="save-named-btn" id="saveNamedBtn">Save</button>
+        </div>
+        <ul class="scenario-list" id="scenarioList"></ul>
+      </div>
+    </details>
+
+
+  </div><!-- /results -->
+
+  <!-- Amortization toggle + CSV export -->
+  <div class="table-actions">
+    <button class="toggle-btn" id="toggleBtn"
+      aria-expanded="false" aria-controls="tableWrap">
+      <span id="toggleLabel">Show Amortization Schedule</span>
+      <svg class="chevron" width="16" height="16" viewBox="0 0 16 16"
+        fill="none" stroke="currentColor" stroke-width="2.2"
+        stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <polyline points="4 6 8 10 12 6"/>
+      </svg>
+    </button>
+    <button class="csv-btn" id="csvBtn" aria-label="Download amortization schedule as CSV">↓ CSV</button>
+  </div>
+
+  <!-- Amortization table -->
+  <div class="table-wrap" id="tableWrap" hidden>
+    <table class="amort-table" aria-label="Full amortization schedule">
+      <thead>
+        <tr>
+          <th scope="col">Month</th>
+          <th scope="col">Payment</th>
+          <th scope="col">Principal</th>
+          <th scope="col">Interest</th>
+          <th scope="col">Balance</th>
+        </tr>
+      </thead>
+      <tbody id="tableBody"></tbody>
+    </table>
+  </div>
+
+  <!-- Ad slot — hidden until AdSense approval -->
+  <div id="adSlot" style="display:none">
+    <!-- AdSense ad unit goes here -->
+  </div>
+
+
+</main>
+
+<div class="scroll-btns" id="scrollBtns">
+  <button class="scroll-btn" id="scrollTopBtn" aria-label="Back to top" title="Back to top">↑</button>
+  <button class="scroll-btn" id="scrollBotBtn" aria-label="Jump to bottom" title="Jump to bottom">↓</button>
+</div>
+
+<div id="tipBox" role="tooltip" hidden></div>
+
+<footer>
+  <p>
+    <a href="https://book.saltnfork.com">The Book</a> ·
+    <a href="https://budget.saltnfork.com">Budget</a> ·
+    <a href="https://nibcalc.saltnfork.com">NIB Calculator</a> ·
+    <a href="https://eat.saltnfork.com">Eats</a> ·
+    <a href="https://bored.saltnfork.com">Bored</a> ·
+    <a href="https://question.saltnfork.com">One Question</a> ·
+    <a href="https://cutlist.saltnfork.com">Cut List</a> ·
+    <a href="https://watch.saltnfork.com">Watch</a> ·
+    <a href="https://decide.saltnfork.com">Decisions</a> ·
+    <a href="https://learn.saltnfork.com">Learn</a> ·
+    <a href="https://split.saltnfork.com">Bill Split</a> ·
+    <a href="https://rate.saltnfork.com">Rate Calculator</a>
+  </p>
+  <p>A <a href="https://saltnfork.com">Salt n' Fork</a> Project · &copy; <span id="footerYear"></span></p>
+</footer>
+
+<script>
+  'use strict';
+
+  /* ════════════════════════════════════════
+     STATE
+  ════════════════════════════════════════ */
+  const _now = new Date();
+  const S = {
+    balance: 20000,
+    rate: 6.5,
+    term: 60,
+    extra: 0,
+    extraFreq: 'monthly',
+    paymentOverridden: false,
+    manualPayment: 0,
+    calcPayment: 0,
+    startMonth: _now.getMonth() + 1,
+    startYear:  _now.getFullYear(),
+    biweekly:   false,
+    lumpSum:    0,
+    lumpMonth:  1,
+    termUnit: 'months',
+  };
+
+  let savedScenario = null;
+
+  /* ════════════════════════════════════════
+     MATH
+  ════════════════════════════════════════ */
+  function stdPayment(P, annualRate, n) {
+    if (annualRate === 0) return P / n;
+    const r = annualRate / 1200;
+    return P * (r * Math.pow(1 + r, n)) / (Math.pow(1 + r, n) - 1);
+  }
+
+  function amortize(P, annualRate, basePayment, extraPayment, lumpSum, lumpMonth) {
+    const r = annualRate / 1200;
+    const monthly = basePayment + (extraPayment || 0);
+    const ls = lumpSum || 0;
+    const lm = lumpMonth || 1;
+    let bal = P;
+    const rows = [];
+    let totalInterest = 0;
+
+    while (bal > 0.005 && rows.length < 999) {
+      // Apply one-time lump sum before this month's payment
+      if (ls > 0 && rows.length === lm - 1) {
+        const applied = Math.min(ls, bal);
+        bal -= applied;
+        if (bal <= 0.005) {
+          rows.push({ month: rows.length + 1, payment: applied, principal: applied, interest: 0, balance: 0 });
+          break;
+        }
+      }
+      const interest = r > 0 ? bal * r : 0;
+      const desiredPrincipal = monthly - interest;
+      if (desiredPrincipal <= 0) break; // payment can't cover interest
+      const principal = Math.min(desiredPrincipal, bal);
+      const actualPayment = principal + interest;
+      bal = Math.max(0, bal - principal);
+      totalInterest += interest;
+      rows.push({ month: rows.length + 1, payment: actualPayment, principal, interest, balance: bal });
+      if (bal === 0) break;
+    }
+
+    return { rows, totalInterest };
+  }
+
+  // Convert extra payment to monthly equivalent based on selected frequency
+  function extraMonthly() {
+    if (S.extra <= 0) return 0;
+    if (S.extraFreq === 'weekly')  return S.extra * 52 / 12;
+    if (S.extraFreq === 'daily')   return S.extra * 365 / 12;
+    if (S.extraFreq === 'yearly')  return S.extra / 12;
+    return S.extra; // monthly
+  }
+
+  // Short label for the selected frequency
+  function freqLabel() {
+    if (S.extraFreq === 'weekly')  return '/wk';
+    if (S.extraFreq === 'daily')   return '/day';
+    if (S.extraFreq === 'yearly')  return '/yr';
+    return '/mo';
+  }
+
+  function payoffDate(months) {
+    const d = new Date(S.startYear, S.startMonth - 1 + months, 1);
+    return d.toLocaleDateString('en-US', { month: 'short', year: 'numeric' });
+  }
+
+  /* ════════════════════════════════════════
+     LOCALE / CURRENCY DETECTION
+     Uses navigator.language as a best guess.
+     Note: locale ≠ currency — e.g. en-US is
+     reliable, but en-GB could be GBP or EUR.
+     Defaults to USD for unrecognised locales.
+  ════════════════════════════════════════ */
+  const LOCALE = navigator.language || 'en-US';
+  const CURRENCY = (function () {
+    const map = {
+      'en-US': 'USD', 'en-CA': 'CAD', 'en-GB': 'GBP', 'en-AU': 'AUD', 'en-NZ': 'NZD',
+      'en-IE': 'EUR', 'en-IN': 'INR', 'en-SG': 'SGD', 'en-ZA': 'ZAR', 'en-PH': 'PHP',
+      'en-HK': 'HKD', 'en-MY': 'MYR', 'en-NG': 'NGN',
+      'de': 'EUR', 'de-DE': 'EUR', 'de-AT': 'EUR', 'de-CH': 'CHF', 'de-LI': 'CHF',
+      'fr': 'EUR', 'fr-FR': 'EUR', 'fr-BE': 'EUR', 'fr-CH': 'CHF', 'fr-CA': 'CAD', 'fr-LU': 'EUR',
+      'es': 'EUR', 'es-ES': 'EUR', 'es-MX': 'MXN', 'es-AR': 'ARS', 'es-CO': 'COP',
+      'es-CL': 'CLP', 'es-PE': 'PEN', 'es-VE': 'VES',
+      'it': 'EUR', 'it-IT': 'EUR', 'it-CH': 'CHF',
+      'pt': 'EUR', 'pt-PT': 'EUR', 'pt-BR': 'BRL',
+      'nl': 'EUR', 'nl-NL': 'EUR', 'nl-BE': 'EUR',
+      'ja': 'JPY', 'zh-CN': 'CNY', 'zh-TW': 'TWD', 'zh-HK': 'HKD', 'zh-MO': 'MOP',
+      'ko': 'KRW', 'ru': 'RUB', 'tr': 'TRY', 'pl': 'PLN',
+      'sv': 'SEK', 'nb': 'NOK', 'da': 'DKK', 'fi': 'EUR', 'cs': 'CZK',
+      'hu': 'HUF', 'ro': 'RON', 'uk': 'UAH', 'ar': 'SAR', 'he': 'ILS',
+      'th': 'THB', 'vi': 'VND', 'id': 'IDR', 'ms': 'MYR', 'hi': 'INR',
+    };
+    const lang = LOCALE.toLowerCase();
+    return map[lang] || map[lang.split('-')[0]] || 'USD';
+  })();
+
+  /* ════════════════════════════════════════
+     FORMATTERS
+  ════════════════════════════════════════ */
+  // Currency with decimals (e.g. $1,299.74)
+  const _cfmt = new Intl.NumberFormat(LOCALE, { style: 'currency', currency: CURRENCY });
+  // Currency whole numbers (e.g. $200)
+  const _cfmtI = new Intl.NumberFormat(LOCALE, { style: 'currency', currency: CURRENCY, minimumFractionDigits: 0, maximumFractionDigits: 0 });
+  // Compact for chart axis (e.g. $100K, $25K)
+  const _cfmtCompact = new Intl.NumberFormat(LOCALE, { style: 'currency', currency: CURRENCY, notation: 'compact', maximumFractionDigits: 0 });
+
+  function fmtN(n)     { return _cfmt.format(n); }
+  function fmtI(n)     { return _cfmtI.format(Math.round(n)); }
+  function fmtChart(n) { return _cfmtCompact.format(n); }
+
+  /* ════════════════════════════════════════
+     SLIDER FILL
+  ════════════════════════════════════════ */
+  function setFill(slider) {
+    const min = +slider.min, max = +slider.max, val = +slider.value;
+    const pct = ((val - min) / (max - min)) * 100;
+    slider.style.setProperty('--pct', pct.toFixed(1) + '%');
+  }
+
+  /* ════════════════════════════════════════
+     SYNC PAIRS (input <-> slider)
+  ════════════════════════════════════════ */
+  function linkPair(inputId, sliderId, stateKey, onChangeExtra) {
+    const inp = document.getElementById(inputId);
+    const sld = document.getElementById(sliderId);
+
+    inp.addEventListener('input', () => {
+      const v = parseFloat(inp.value);
+      if (isNaN(v)) return;
+      const clamped = Math.min(Math.max(v, +sld.min), +sld.max);
+      sld.value = clamped;
+      setFill(sld);
+      S[stateKey] = clamped;
+      if (onChangeExtra) onChangeExtra();
+      recalc();
+    });
+
+    sld.addEventListener('input', () => {
+      const v = parseFloat(sld.value);
+      inp.value = v;
+      setFill(sld);
+      S[stateKey] = v;
+      if (onChangeExtra) onChangeExtra();
+      recalc();
+    });
+
+    setFill(sld);
+  }
+
+  /* ── Comma-formatted text input (balance only) ── */
+  function formatComma(n) { return Math.round(n).toLocaleString('en-US'); }
+  function parseComma(s)  { return parseFloat(String(s).replace(/,/g, '')) || 0; }
+
+  function linkPairText(inputId, sliderId, stateKey) {
+    const inp = document.getElementById(inputId);
+    const sld = document.getElementById(sliderId);
+    inp.addEventListener('input', () => {
+      const v = parseComma(inp.value);
+      if (!v) return;
+      S[stateKey] = v;
+      sld.value = Math.min(Math.max(v, +sld.min), +sld.max);
+      setFill(sld);
+      recalc();
+    });
+    inp.addEventListener('focus', () => { inp.value = S[stateKey]; });
+    inp.addEventListener('blur',  () => { inp.value = formatComma(S[stateKey]); });
+    sld.addEventListener('input', () => {
+      const v = parseFloat(sld.value);
+      inp.value = formatComma(v); setFill(sld); S[stateKey] = v;
+      recalc();
+    });
+    inp.value = formatComma(S[stateKey]);
+    setFill(sld);
+  }
+
+  /* ════════════════════════════════════════
+     DISPLAY LABELS
+  ════════════════════════════════════════ */
+  function updateLabels() {
+    document.getElementById('balanceVal').textContent = fmtI(S.balance);
+    document.getElementById('rateVal').textContent    = S.rate.toFixed(2);
+    document.getElementById('termVal').textContent    = S.termUnit === 'years'
+      ? (S.term / 12) + ' yr'
+      : S.term + ' mo';
+    document.getElementById('extraVal').textContent   = fmtI(S.extra);
+  }
+
+  /* ════════════════════════════════════════
+     MAIN RECALCULATE
+  ════════════════════════════════════════ */
+  function recalc() {
+    updateLabels();
+
+    const auto = stdPayment(S.balance, S.rate, S.term);
+    S.calcPayment = auto;
+
+    const paymentEl = document.getElementById('payment');
+    const resetBtn  = document.getElementById('resetBtn');
+
+    // When bi-weekly is active, always show the standard auto payment
+    if (S.biweekly) {
+      paymentEl.value = auto.toFixed(2);
+      paymentEl.classList.remove('overridden');
+      resetBtn.classList.remove('visible');
+    } else if (!S.paymentOverridden) {
+      paymentEl.value = auto.toFixed(2);
+      paymentEl.classList.remove('overridden');
+      resetBtn.classList.remove('visible');
+      S.manualPayment = auto;
+    } else {
+      paymentEl.classList.add('overridden');
+      resetBtn.classList.add('visible');
+    }
+
+    // "Current Plan" = base payment without any extras
+    // "With Extra"   = effectivePmt (bi-weekly multiplier if on) + extra monthly + lump sum
+    const currentBasePmt = S.biweekly ? auto : (S.paymentOverridden ? S.manualPayment : auto);
+    const effectivePmt   = S.biweekly ? auto * 13 / 12 : currentBasePmt;
+
+    // Update bi-weekly sub-label
+    const biweeklySub = document.getElementById('biweeklySub');
+    if (biweeklySub) {
+      biweeklySub.textContent = S.biweekly
+        ? '\u2248 ' + fmtN(effectivePmt / 2) + ' per bi-weekly payment'
+        : '';
+    }
+
+    // Clamp lumpMonth to current term
+    const lumpMonthEl = document.getElementById('lumpMonth');
+    if (lumpMonthEl) {
+      lumpMonthEl.max = S.term;
+      if (S.lumpMonth > S.term) {
+        S.lumpMonth = S.term;
+        lumpMonthEl.value = S.lumpMonth;
+      }
+    }
+
+    // Guard: base payment must cover first month's interest
+    if (S.rate > 0) {
+      const firstInterest = S.balance * (S.rate / 1200);
+      if (currentBasePmt <= firstInterest) {
+        showError('Monthly payment is too small to cover interest. Increase the payment or reduce the rate.');
+        return;
+      }
+    }
+
+    const hasExtras = S.extra > 0 || S.biweekly || S.lumpSum > 0;
+    const current   = amortize(S.balance, S.rate, currentBasePmt, 0, 0, 0);
+    const withExtra = hasExtras
+      ? amortize(S.balance, S.rate, effectivePmt, extraMonthly(), S.lumpSum, S.lumpMonth)
+      : null;
+
+    renderSummary(currentBasePmt, effectivePmt, current, withExtra);
+    renderCallout(current, withExtra);
+
+    // Refresh table if open
+    if (!document.getElementById('tableWrap').hidden) {
+      buildTable(current.rows, withExtra ? withExtra.rows.length : null);
+    }
+
+    updateSaveBtn();
+    debouncedHashUpdate();
+  }
+
+  function showError(msg) {
+    const ids = ['cPayment','ePayment','cInterest','eInterest','cDate','eDate','cMonths','eMonths'];
+    ids.forEach(id => { document.getElementById(id).textContent = '—'; });
+    const callout = document.getElementById('callout');
+    callout.textContent = msg;
+    callout.className = 'callout-text muted';
+  }
+
+  /* ════════════════════════════════════════
+     RENDER SUMMARY TABLE
+  ════════════════════════════════════════ */
+  function renderSummary(currentPmt, effectivePmt, current, withExtra) {
+    const cLen = current.rows.length;
+    const eLen = withExtra ? withExtra.rows.length : null;
+
+    const interestSaved = withExtra ? (current.totalInterest - withExtra.totalInterest) : null;
+    const monthsSaved   = withExtra ? (cLen - eLen) : null;
+
+    document.getElementById('extraHead').textContent = withExtra ? scenarioLabel() : 'With Extra';
+
+    document.getElementById('cPayment').textContent  = fmtN(currentPmt);
+    document.getElementById('ePayment').innerHTML    = withExtra
+      ? fmtN(effectivePmt + extraMonthly())
+      : '<span style="color:var(--text-3)">—</span>';
+
+    document.getElementById('cInterest').textContent = fmtN(current.totalInterest);
+    if (withExtra) {
+      document.getElementById('eInterest').innerHTML =
+        fmtN(withExtra.totalInterest) +
+        `<span class="save-sub">save ${fmtN(interestSaved)}</span>`;
+    } else {
+      document.getElementById('eInterest').innerHTML = '<span style="color:var(--text-3)">—</span>';
+    }
+
+    document.getElementById('cDate').textContent = payoffDate(cLen);
+    document.getElementById('eDate').textContent = withExtra
+      ? payoffDate(eLen)
+      : '—';
+
+    document.getElementById('cMonths').textContent = cLen + ' mo';
+    if (withExtra) {
+      document.getElementById('eMonths').innerHTML =
+        eLen + ' mo' +
+        `<span class="save-sub">${monthsSaved} mo sooner</span>`;
+    } else {
+      document.getElementById('eMonths').innerHTML = '<span style="color:var(--text-3)">—</span>';
+    }
+
+    // Total extra paid: difference between effective payment + extra and standard base payment × months
+    // Captures all incremental payment sources (bi-weekly multiplier, extra field, override)
+    document.getElementById('cExtraPaid').textContent = '—';
+    if (withExtra) {
+      const basePmt   = stdPayment(S.balance, S.rate, S.term);
+      const extraPaid = (effectivePmt + extraMonthly()) - basePmt;
+      document.getElementById('eExtraPaid').textContent = extraPaid > 0
+        ? fmtN(extraPaid * eLen)
+        : '—';
+    } else {
+      document.getElementById('eExtraPaid').innerHTML = '<span style="color:var(--text-3)">—</span>';
+    }
+
+    const cTotalPaid = S.balance + current.totalInterest;
+    document.getElementById('cTotalPaid').textContent = fmtN(cTotalPaid);
+    if (withExtra) {
+      const eTotalPaidVal = S.balance + withExtra.totalInterest;
+      const totalSaved = cTotalPaid - eTotalPaidVal;
+      document.getElementById('eTotalPaid').innerHTML =
+        fmtN(eTotalPaidVal) + `<span class="save-sub">save ${fmtN(totalSaved)}</span>`;
+    } else {
+      document.getElementById('eTotalPaid').innerHTML = '<span style="color:var(--text-3)">—</span>';
+    }
+
+    // Saved scenario column
+    const savedHead = document.getElementById('savedHead');
+    const sCells = ['sPayment','sInterest','sDate','sMonths','sExtraPaid','sTotalPaid'];
+    if (savedScenario) {
+      savedHead.hidden = false;
+      savedHead.textContent = savedScenario.label;
+      sCells.forEach(id => { document.getElementById(id).hidden = false; });
+      document.getElementById('sPayment').textContent  = fmtN(savedScenario.payment);
+      document.getElementById('sInterest').textContent = fmtN(savedScenario.totalInterest);
+      document.getElementById('sDate').textContent     = savedScenario.payoffDate;
+      document.getElementById('sMonths').textContent   = savedScenario.months + ' mo';
+      document.getElementById('sExtraPaid').textContent = savedScenario.extraPaid > 0 ? fmtN(savedScenario.extraPaid) : '—';
+      document.getElementById('sTotalPaid').textContent = fmtN(S.balance + savedScenario.totalInterest);
+    } else {
+      savedHead.hidden = true;
+      sCells.forEach(id => { document.getElementById(id).hidden = true; });
+    }
+  }
+
+  /* ════════════════════════════════════════
+     RENDER CALLOUT
+  ════════════════════════════════════════ */
+  function renderCallout(current, withExtra) {
+    const el = document.getElementById('callout');
+    if (!withExtra) {
+      el.innerHTML = 'Enter an extra payment, enable bi-weekly, or add a lump sum to see how much you save.';
+      el.className = 'callout-text muted';
+      return;
+    }
+
+    const cLen = current.rows.length;
+    const eLen = withExtra.rows.length;
+    const monthsSaved   = cLen - eLen;
+    const interestSaved = current.totalInterest - withExtra.totalInterest;
+    const cDate = payoffDate(cLen);
+    const eDate = payoffDate(eLen);
+
+    // Build description of what extras are applied
+    const parts = [];
+    if (S.biweekly) parts.push('paying bi-weekly');
+    if (S.extra > 0) parts.push(`an extra <strong>${fmtI(S.extra)}</strong>${freqLabel()}`);
+    if (S.lumpSum > 0) parts.push(`a <strong>${fmtI(S.lumpSum)}</strong> lump sum in month ${S.lumpMonth}`);
+    // Ensure the first part reads naturally after "By" — prefix "paying" if not already present
+    if (parts.length > 0 && !parts[0].startsWith('paying')) parts[0] = 'paying ' + parts[0];
+    const extraDesc = parts.length > 0 ? parts.join(' + ') : 'these changes';
+
+    el.innerHTML = `By ${extraDesc}, you save <strong>${fmtN(interestSaved)}</strong> in interest and pay off your loan <strong>${monthsSaved} months sooner</strong> — <strong>${eDate}</strong> instead of <strong>${cDate}</strong>.`;
+    el.className = 'callout-text';
+  }
+
+  /* ════════════════════════════════════════
+     AMORTIZATION TABLE
+  ════════════════════════════════════════ */
+  function buildTable(currentRows, extraLength) {
+    const tbody = document.getElementById('tableBody');
+    const frag  = document.createDocumentFragment();
+
+    currentRows.forEach((row, i) => {
+      const tr  = document.createElement('tr');
+      const idx = i + 1;
+      const isEarly  = extraLength !== null && idx === extraLength;
+      const isDimmed = extraLength !== null && idx > extraLength;
+
+      if (isEarly)  tr.classList.add('early-payoff');
+      if (isDimmed) tr.classList.add('dimmed');
+
+      tr.innerHTML = `
+        <td>${row.month}${isEarly ? ' ★' : ''}</td>
+        <td>${fmtN(row.payment)}</td>
+        <td>${fmtN(row.principal)}</td>
+        <td>${fmtN(row.interest)}</td>
+        <td>${fmtN(row.balance)}</td>
+      `;
+      frag.appendChild(tr);
+    });
+
+    tbody.replaceChildren(frag);
+  }
+
+  /* ════════════════════════════════════════
+     TOGGLE TABLE
+  ════════════════════════════════════════ */
+  document.getElementById('toggleBtn').addEventListener('click', function () {
+    const wrap     = document.getElementById('tableWrap');
+    const isOpen   = this.getAttribute('aria-expanded') === 'true';
+    const opening  = !isOpen;
+
+    wrap.hidden = isOpen;
+    this.setAttribute('aria-expanded', opening ? 'true' : 'false');
+    document.getElementById('toggleLabel').textContent = opening
+      ? 'Hide Amortization Schedule'
+      : 'Show Amortization Schedule';
+
+    if (opening) {
+      const auto = S.calcPayment;
+      const currentBasePmt = S.biweekly ? auto : (S.paymentOverridden ? S.manualPayment : auto);
+      const effectivePmt   = S.biweekly ? auto * 13 / 12 : currentBasePmt;
+      const hasExtras = S.extra > 0 || S.biweekly || S.lumpSum > 0;
+      const current   = amortize(S.balance, S.rate, currentBasePmt, 0, 0, 0);
+      const withExtra = hasExtras
+        ? amortize(S.balance, S.rate, effectivePmt, extraMonthly(), S.lumpSum, S.lumpMonth)
+        : null;
+      buildTable(current.rows, withExtra ? withExtra.rows.length : null);
+
+      // Scroll the highlighted row into view
+      setTimeout(() => {
+        const highlighted = document.querySelector('.amort-table .early-payoff');
+        if (highlighted) highlighted.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+      }, 100);
+    }
+  });
+
+  /* ════════════════════════════════════════
+     MONTHLY PAYMENT OVERRIDE
+  ════════════════════════════════════════ */
+  document.getElementById('payment').addEventListener('input', function () {
+    const v = parseFloat(this.value);
+    if (isNaN(v) || v <= 0) return;
+    const diff = Math.abs(v - S.calcPayment);
+    if (diff > 0.01) {
+      S.paymentOverridden = true;
+      S.manualPayment = v;
+    } else {
+      S.paymentOverridden = false;
+    }
+    recalc();
+  });
+
+  document.getElementById('resetBtn').addEventListener('click', function (e) {
+    e.preventDefault();
+    S.paymentOverridden = false;
+    recalc();
+  });
+
+  function updateSaveBtn() {
+    const btn = document.getElementById('saveScenarioBtn');
+    const hasExtras = S.extra > 0 || S.biweekly || S.lumpSum > 0;
+    btn.disabled = !hasExtras;
+    btn.title = hasExtras ? 'Pin this scenario for comparison' : 'Add an extra payment first';
+  }
+
+  function scenarioLabel() {
+    const parts = [];
+    if (S.extra > 0)   parts.push(`+${fmtI(S.extra)}${freqLabel()}`);
+    if (S.biweekly)    parts.push('Bi-weekly');
+    if (S.lumpSum > 0) parts.push(`Lump ${fmtI(S.lumpSum)}`);
+    return parts.length > 0 ? parts.join(' + ') : 'Custom';
+  }
+
+  /* ════════════════════════════════════════
+     LINK SLIDER/INPUT PAIRS
+  ════════════════════════════════════════ */
+  linkPairText('balance', 'balanceSlider', 'balance');
+  linkPair('rate',    'rateSlider',    'rate');
+  (function setupTermInput() {
+    const inp = document.getElementById('term');
+    const sld = document.getElementById('termSlider');
+
+    function termFromDisplay(v) {
+      return S.termUnit === 'years' ? Math.round(v) * 12 : Math.round(v);
+    }
+
+    function syncFromInput() {
+      const v = parseFloat(inp.value);
+      if (isNaN(v) || v <= 0) return;
+      S.term = termFromDisplay(v);
+      sld.value = v;
+      setFill(sld);
+      recalc();
+    }
+
+    inp.addEventListener('input', syncFromInput);
+    inp.addEventListener('change', syncFromInput);
+    sld.addEventListener('input', function() {
+      const v = parseFloat(sld.value);
+      inp.value = v;
+      setFill(sld);
+      S.term = termFromDisplay(v);
+      recalc();
+    });
+
+    document.getElementById('termUnitToggle').addEventListener('click', function(e) {
+      const btn = e.target.closest('.unit-btn');
+      if (!btn) return;
+      const unit = btn.dataset.unit;
+      if (unit === S.termUnit) return;
+      S.termUnit = unit;
+      this.querySelectorAll('.unit-btn').forEach(function(b) {
+        b.classList.toggle('active', b.dataset.unit === unit);
+      });
+      if (unit === 'years') {
+        inp.min = 1; inp.max = 30; inp.step = 1;
+        sld.min = 1; sld.max = 30; sld.step = 1;
+        const yrs = Math.round(S.term / 12);
+        inp.value = yrs; sld.value = yrs;
+      } else {
+        inp.min = 6; inp.max = 360; inp.step = 1;
+        sld.min = 6; sld.max = 360; sld.step = 1;
+        inp.value = S.term; sld.value = S.term;
+      }
+      setFill(sld);
+      recalc();
+    });
+  })();
+  const _extraBounds = {
+    monthly: { step: 10  },
+    weekly:  { step: 10  },
+    daily:   { step: 1   },
+    yearly:  { step: 100 },
+  };
+
+  function updateExtraSliderBounds() {
+    const inp = document.getElementById('extra');
+    const sld = document.getElementById('extraSlider');
+    const bounds = _extraBounds[S.extraFreq] || _extraBounds.monthly;
+    inp.step = bounds.step;
+    sld.step = bounds.step;
+    sld.value = Math.min(S.extra, 25000);
+    setFill(sld);
+  }
+
+  (function setupExtraInput() {
+    const inp = document.getElementById('extra');
+    const sld = document.getElementById('extraSlider');
+    inp.addEventListener('input', function() {
+      const v = parseFloat(inp.value);
+      S.extra = isNaN(v) || v < 0 ? 0 : v;
+      sld.value = Math.min(S.extra, 25000);
+      setFill(sld);
+      recalc();
+    });
+    sld.addEventListener('input', function() {
+      S.extra = parseFloat(sld.value);
+      inp.value = S.extra;
+      setFill(sld);
+      recalc();
+    });
+  })();
+
+  document.getElementById('extraFreq').addEventListener('change', function() {
+    S.extraFreq = this.value;
+    updateExtraSliderBounds();
+    recalc();
+  });
+
+  /* ════════════════════════════════════════
+     START DATE
+  ════════════════════════════════════════ */
+  (function() {
+    // Populate year options: current year - 30 to current year + 5
+    var yearSel = document.getElementById('startYear');
+    var curYear = new Date().getFullYear();
+    for (var y = curYear - 30; y <= curYear + 5; y++) {
+      var opt = document.createElement('option');
+      opt.value = y;
+      opt.textContent = y;
+      yearSel.appendChild(opt);
+    }
+    // Set selects to current state (may be updated by loadHash later)
+    document.getElementById('startMonth').value = S.startMonth;
+    yearSel.value = S.startYear;
+
+    document.getElementById('startMonth').addEventListener('change', function() {
+      S.startMonth = +this.value;
+      recalc();
+    });
+    yearSel.addEventListener('change', function() {
+      S.startYear = +this.value;
+      recalc();
+    });
+  })();
+
+  /* ════════════════════════════════════════
+     BI-WEEKLY TOGGLE
+  ════════════════════════════════════════ */
+  document.getElementById('biweeklyBtn').addEventListener('click', function() {
+    S.biweekly = !S.biweekly;
+    this.setAttribute('aria-checked', S.biweekly ? 'true' : 'false');
+    recalc();
+  });
+
+  /* ════════════════════════════════════════
+     LUMP SUM
+  ════════════════════════════════════════ */
+  document.getElementById('lumpSum').addEventListener('input', function() {
+    var v = parseFloat(this.value) || 0;
+    S.lumpSum = Math.max(0, v);
+    document.getElementById('lumpMonthRow').style.display = S.lumpSum > 0 ? 'flex' : 'none';
+    recalc();
+  });
+  document.getElementById('lumpMonth').addEventListener('input', function() {
+    var v = parseInt(this.value) || 1;
+    S.lumpMonth = Math.max(1, v);
+    recalc();
+  });
+
+  /* ════════════════════════════════════════
+     SCENARIO COMPARISON
+  ════════════════════════════════════════ */
+  document.getElementById('saveScenarioBtn').addEventListener('click', function() {
+    const auto = stdPayment(S.balance, S.rate, S.term);
+    const currentBasePmt = S.biweekly ? auto : (S.paymentOverridden ? S.manualPayment : auto);
+    const effectivePmt   = S.biweekly ? auto * 13 / 12 : currentBasePmt;
+    const hasExtras = S.extra > 0 || S.biweekly || S.lumpSum > 0;
+    if (!hasExtras) return;
+    const em = extraMonthly();
+    const result = amortize(S.balance, S.rate, effectivePmt, em, S.lumpSum, S.lumpMonth);
+    const basePmt   = stdPayment(S.balance, S.rate, S.term);
+    const extraPaid = (effectivePmt + em - basePmt) * result.rows.length;
+    savedScenario = {
+      label:        scenarioLabel(),
+      payment:      effectivePmt + em,
+      totalInterest: result.totalInterest,
+      payoffDate:   payoffDate(result.rows.length),
+      months:       result.rows.length,
+      extraPaid:    Math.max(0, extraPaid),
+      rows:         result.rows,
+    };
+    document.getElementById('savedScenarioLabelText').textContent = savedScenario.label;
+    document.getElementById('savedScenarioLabel').hidden = false;
+    recalc();
+  });
+
+  document.getElementById('clearScenarioBtn').addEventListener('click', function() {
+    savedScenario = null;
+    document.getElementById('savedScenarioLabel').hidden = true;
+    recalc();
+  });
+
+
+  /* ════════════════════════════════════════
+     SAVE/LOAD NAMED SCENARIOS (localStorage)
+  ════════════════════════════════════════ */
+  var LS_KEY = 'payoff_scenarios';
+
+  function getStoredScenarios() {
+    try { return JSON.parse(localStorage.getItem(LS_KEY)) || []; } catch (_) { return []; }
+  }
+
+  function setStoredScenarios(list) {
+    localStorage.setItem(LS_KEY, JSON.stringify(list));
+  }
+
+  function renderScenarioList() {
+    var list = getStoredScenarios();
+    var ul   = document.getElementById('scenarioList');
+    ul.innerHTML = '';
+    if (list.length === 0) {
+      ul.innerHTML = '<li class="scenario-list-empty">No saved scenarios yet.</li>';
+      return;
+    }
+    list.forEach(function(item, idx) {
+      var li = document.createElement('li');
+      li.innerHTML =
+        '<span class="s-name" title="' + item.name.replace(/"/g,'&quot;') + '">' + item.name + '</span>' +
+        '<button class="s-load" data-idx="' + idx + '">Load</button>' +
+        '<button class="s-del" data-idx="' + idx + '" aria-label="Delete ' + item.name + '">✕</button>';
+      ul.appendChild(li);
+    });
+
+    ul.querySelectorAll('.s-load').forEach(function(btn) {
+      btn.addEventListener('click', function() {
+        var item = getStoredScenarios()[+this.dataset.idx];
+        if (!item) return;
+        // Temporarily set hash and reload state from it
+        history.replaceState(null, '', '#' + item.hash);
+        window.location.hash = item.hash;
+        loadHash();
+        recalc();
+      });
+    });
+
+    ul.querySelectorAll('.s-del').forEach(function(btn) {
+      btn.addEventListener('click', function() {
+        var list = getStoredScenarios();
+        list.splice(+this.dataset.idx, 1);
+        setStoredScenarios(list);
+        renderScenarioList();
+      });
+    });
+
+    updateNamedSaveCap();
+  }
+
+  function updateNamedSaveCap() {
+    var atLimit   = getStoredScenarios().length >= 5;
+    var nameInput = document.getElementById('scenarioNameInput');
+    var saveBtn   = document.getElementById('saveNamedBtn');
+    nameInput.disabled = atLimit;
+    saveBtn.disabled   = atLimit;
+    nameInput.placeholder = atLimit ? 'Delete a scenario to save a new one' : 'Name this scenario\u2026';
+  }
+
+  document.getElementById('saveNamedBtn').addEventListener('click', function() {
+    var name = document.getElementById('scenarioNameInput').value.trim();
+    if (!name) { document.getElementById('scenarioNameInput').focus(); return; }
+    encodeHash(); // ensure hash is current
+    var hash = window.location.hash.slice(1);
+    var list = getStoredScenarios();
+    // Replace existing entry with same name, or add new
+    var existing = list.findIndex(function(s) { return s.name === name; });
+    if (existing >= 0) list[existing].hash = hash;
+    else {
+      if (list.length >= 5) return;
+      list.push({ name: name, hash: hash });
+    }
+    setStoredScenarios(list);
+    document.getElementById('scenarioNameInput').value = '';
+    renderScenarioList();
+  });
+
+  // Render list when section opens
+  document.getElementById('savedScenariosSection').addEventListener('toggle', function() {
+    if (this.open) renderScenarioList();
+  });
+
+  // Initial render if section is already open (unlikely on first load but safe)
+  if (document.getElementById('savedScenariosSection').open) renderScenarioList();
+
+
+  /* ════════════════════════════════════════
+     URL HASH STATE
+  ════════════════════════════════════════ */
+  function encodeHash() {
+    const p = new URLSearchParams({
+      b: S.balance,
+      r: S.rate,
+      t: S.term,
+      e: S.extra,
+      ...(S.extraFreq !== 'monthly' ? { ef: S.extraFreq } : {}),
+      sd: S.startYear + '-' + String(S.startMonth).padStart(2, '0'),
+      ...(S.paymentOverridden ? { p: S.manualPayment.toFixed(2) } : {}),
+      ...(S.biweekly ? { bw: 1 } : {}),
+      ...(S.lumpSum > 0 ? { ls: S.lumpSum, lm: S.lumpMonth } : {}),
+      ...(savedScenario ? {
+        pp: savedScenario.payment.toFixed(2),
+        pi: savedScenario.totalInterest.toFixed(2),
+        pm: savedScenario.months,
+        pe: savedScenario.extraPaid.toFixed(2),
+        pl: savedScenario.label,
+        pd: savedScenario.payoffDate,
+      } : {}),
+    });
+    history.replaceState(null, '', '#' + p.toString());
+  }
+
+  function loadHash() {
+    const hash = window.location.hash.slice(1);
+    if (!hash) return;
+    try {
+      const p = new URLSearchParams(hash);
+      const set = (key, elId, sldId, stateKey) => {
+        if (!p.has(key)) return;
+        const v = parseFloat(p.get(key));
+        if (isNaN(v)) return;
+        S[stateKey] = v;
+        document.getElementById(elId).value = v;
+        if (sldId) {
+          document.getElementById(sldId).value = v;
+          setFill(document.getElementById(sldId));
+        }
+      };
+      set('b', 'balance', 'balanceSlider', 'balance');
+      // Comma-format the balance input after loading from hash
+      if (p.has('b')) document.getElementById('balance').value = formatComma(S.balance);
+      set('r', 'rate',    'rateSlider',    'rate');
+      set('t', 'term',    'termSlider',    'term');
+      set('e', 'extra',   'extraSlider',   'extra');
+      if (p.has('p')) {
+        S.paymentOverridden = true;
+        S.manualPayment = parseFloat(p.get('p'));
+        document.getElementById('payment').value = S.manualPayment.toFixed(2);
+      }
+      // Start date
+      if (p.has('sd')) {
+        var parts = p.get('sd').split('-');
+        if (parts.length === 2) {
+          var hy = parseInt(parts[0]), hm = parseInt(parts[1]);
+          if (!isNaN(hy) && !isNaN(hm) && hm >= 1 && hm <= 12) {
+            S.startYear = hy; S.startMonth = hm;
+            var mSel = document.getElementById('startMonth');
+            var ySel = document.getElementById('startYear');
+            if (mSel) mSel.value = hm;
+            if (ySel) ySel.value = hy;
+          }
+        }
+      }
+      // Extra payment frequency
+      if (p.has('ef')) {
+        const ef = p.get('ef');
+        if (ef === 'weekly' || ef === 'daily' || ef === 'yearly') {
+          S.extraFreq = ef;
+          var efSel = document.getElementById('extraFreq');
+          if (efSel) efSel.value = ef;
+          // Re-apply extra now that bounds are correct for this freq
+          updateExtraSliderBounds();
+          if (p.has('e')) {
+            var eVal = parseFloat(p.get('e'));
+            if (!isNaN(eVal)) {
+              S.extra = eVal;
+              document.getElementById('extra').value = eVal;
+              var eSld = document.getElementById('extraSlider');
+              eSld.value = Math.min(eVal, +eSld.max);
+              setFill(eSld);
+            }
+          }
+        }
+      }
+      // Bi-weekly
+      if (p.has('bw')) {
+        S.biweekly = true;
+        var bwBtn = document.getElementById('biweeklyBtn');
+        if (bwBtn) bwBtn.setAttribute('aria-checked', 'true');
+      }
+      // Lump sum
+      if (p.has('ls')) {
+        var ls = parseFloat(p.get('ls'));
+        if (!isNaN(ls) && ls > 0) {
+          S.lumpSum = ls;
+          var lsEl = document.getElementById('lumpSum');
+          if (lsEl) lsEl.value = ls;
+          var lmRow = document.getElementById('lumpMonthRow');
+          if (lmRow) lmRow.style.display = 'flex';
+        }
+      }
+      if (p.has('lm')) {
+        var lm = parseInt(p.get('lm'));
+        if (!isNaN(lm) && lm > 0) {
+          S.lumpMonth = lm;
+          var lmEl = document.getElementById('lumpMonth');
+          if (lmEl) lmEl.value = lm;
+        }
+      }
+      if (p.has('pp')) {
+        savedScenario = {
+          payment:       parseFloat(p.get('pp')),
+          totalInterest: parseFloat(p.get('pi')),
+          months:        parseInt(p.get('pm')),
+          extraPaid:     parseFloat(p.get('pe')),
+          label:         p.get('pl') || '',
+          payoffDate:    p.get('pd') || '',
+          rows:          [],
+        };
+        document.getElementById('savedScenarioLabelText').textContent = savedScenario.label;
+        document.getElementById('savedScenarioLabel').hidden = false;
+      }
+    } catch (_) {}
+  }
+
+  let hashTimer;
+  function debouncedHashUpdate() {
+    clearTimeout(hashTimer);
+    hashTimer = setTimeout(encodeHash, 350);
+  }
+
+  /* ════════════════════════════════════════
+     COPY LINK
+  ════════════════════════════════════════ */
+  (function() {
+    var btn       = document.getElementById('copyLinkBtn');
+    var iconLink  = document.getElementById('iconLink');
+    var iconCheck = document.getElementById('iconCheck');
+    var copyLabel = document.getElementById('copyLabel');
+    btn.addEventListener('click', function() {
+      encodeHash();
+      navigator.clipboard.writeText(location.href).then(function() {
+        iconLink.style.display  = 'none';
+        iconCheck.style.display = '';
+        copyLabel.textContent   = 'Copied!';
+        setTimeout(function() {
+          iconLink.style.display  = '';
+          iconCheck.style.display = 'none';
+          copyLabel.textContent   = 'Copy results link';
+        }, 2000);
+      });
+    });
+  })();
+
+  /* ════════════════════════════════════════
+     CSV EXPORT
+  ════════════════════════════════════════ */
+  document.getElementById('csvBtn').addEventListener('click', function() {
+    const auto = S.calcPayment;
+    const currentBasePmt = S.biweekly ? auto : (S.paymentOverridden ? S.manualPayment : auto);
+    const effectivePmt   = S.biweekly ? auto * 13 / 12 : currentBasePmt;
+    const hasExtras = S.extra > 0 || S.biweekly || S.lumpSum > 0;
+    const current   = amortize(S.balance, S.rate, currentBasePmt, 0, 0, 0);
+    const withExtra = hasExtras
+      ? amortize(S.balance, S.rate, effectivePmt, extraMonthly(), S.lumpSum, S.lumpMonth)
+      : null;
+    const lines = ['Month,Payment,Principal,Interest,Balance' + (withExtra ? ',Extra Balance' : '')];
+    current.rows.forEach(function(r, i) {
+      const extraBal = withExtra && withExtra.rows[i] ? withExtra.rows[i].balance.toFixed(2) : '';
+      lines.push([
+        r.month,
+        r.payment.toFixed(2),
+        r.principal.toFixed(2),
+        r.interest.toFixed(2),
+        r.balance.toFixed(2),
+        extraBal
+      ].join(','));
+    });
+    const blob = new Blob([lines.join('\n')], { type: 'text/csv' });
+    const a = Object.assign(document.createElement('a'), {
+      href: URL.createObjectURL(blob),
+      download: 'loan-amortization.csv'
+    });
+    a.click();
+    URL.revokeObjectURL(a.href);
+  });
+
+  /* ════════════════════════════════════════
+     FIELD TOOLTIPS
+  ════════════════════════════════════════ */
+  (function() {
+    var box = document.getElementById('tipBox');
+    var hideTimer;
+    function showTip(btn) {
+      clearTimeout(hideTimer);
+      box.textContent = btn.dataset.tip;
+      box.hidden = false;
+      var r = btn.getBoundingClientRect();
+      var bw = box.offsetWidth || 220;
+      var left = Math.min(r.left, window.innerWidth - bw - 8);
+      var top  = r.bottom + 6;
+      if (top + 80 > window.innerHeight) top = r.top - 80;
+      box.style.left = Math.max(8, left) + 'px';
+      box.style.top  = top + 'px';
+    }
+    function hideTip() {
+      hideTimer = setTimeout(function() { box.hidden = true; }, 100);
+    }
+    document.querySelectorAll('.tip').forEach(function(btn) {
+      btn.addEventListener('mouseenter', function() { showTip(btn); });
+      btn.addEventListener('mouseleave', hideTip);
+      btn.addEventListener('focus',      function() { showTip(btn); });
+      btn.addEventListener('blur',       hideTip);
+    });
+  })();
+
+  /* ════════════════════════════════════════
+     DARK MODE
+  ════════════════════════════════════════ */
+  (function() {
+    var btn      = document.getElementById('themeToggle');
+    var iconSun  = document.getElementById('iconSun');
+    var iconMoon = document.getElementById('iconMoon');
+    function setIcons(t) {
+      iconSun.style.display  = t === 'dark'  ? '' : 'none';
+      iconMoon.style.display = t === 'light' ? '' : 'none';
+    }
+    function applyTheme(t) {
+      document.documentElement.setAttribute('data-theme', t);
+      localStorage.setItem('theme', t);
+      document.querySelector('meta[name="theme-color"]').content = t === 'dark' ? '#1e293b' : '#3b82f6';
+      setIcons(t);
+      recalc();
+    }
+    btn.addEventListener('click', function() {
+      applyTheme(document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark');
+    });
+    setIcons(document.documentElement.getAttribute('data-theme'));
+  })();
+
+  /* ════════════════════════════════════════
+     SCROLL BUTTONS
+  ════════════════════════════════════════ */
+  (function() {
+    const topBtn = document.getElementById('scrollTopBtn');
+    const botBtn = document.getElementById('scrollBotBtn');
+    function updateScrollBtns() {
+      const scrolled = window.scrollY;
+      const maxScroll = document.documentElement.scrollHeight - window.innerHeight;
+      topBtn.classList.toggle('visible', scrolled > 200);
+      botBtn.classList.toggle('visible', maxScroll > 200 && scrolled < maxScroll - 200);
+    }
+    window.addEventListener('scroll', updateScrollBtns, { passive: true });
+    window.addEventListener('resize', updateScrollBtns, { passive: true });
+    topBtn.addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
+    botBtn.addEventListener('click', () => window.scrollTo({ top: document.documentElement.scrollHeight, behavior: 'smooth' }));
+    updateScrollBtns();
+  })();
+
+  /* ════════════════════════════════════════
+     INIT
+  ════════════════════════════════════════ */
+  loadHash();
+  recalc();
+  document.getElementById('footerYear').textContent = new Date().getFullYear();
+</script>
+
+</body>
+</html>
