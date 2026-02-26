@@ -43,6 +43,54 @@
     "featureList": ["Amortization schedule", "Extra payment comparison", "Balance chart", "Shareable URLs"]
   }
   </script>
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      {
+        "@type": "Question",
+        "name": "How do I pay off my loan faster?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Making extra monthly payments directly reduces your principal balance, which means less interest accrues each month. Even a small extra payment — $50 or $100/mo — can cut years off your loan and save thousands in interest. Use this calculator to see the exact impact."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "How much interest do I save by making extra payments?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "It depends on your balance, interest rate, and how much extra you pay. Enter your loan details and an extra payment amount to see your exact interest savings and new payoff date — updated instantly."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "What is an amortization schedule?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "An amortization schedule is a month-by-month breakdown of your loan payments showing how much goes to principal vs. interest each month. Early in a loan, most of your payment is interest. Over time, more goes to principal. This calculator includes a full amortization table you can view or export as CSV."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Does paying bi-weekly instead of monthly save money?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Yes. Bi-weekly payments mean you make 26 half-payments per year — equivalent to 13 monthly payments instead of 12. That one extra payment per year reduces your principal faster, cutting total interest and shortening your loan term."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "How do I calculate the extra payment needed to pay off my loan by a specific date?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Use the 'Pay off by' date field in this calculator. Enter your target payoff date and it will instantly show you the exact extra monthly payment required to hit that goal. Click Apply to see the full impact on your amortization schedule."
+        }
+      }
+    ]
+  }
+  </script>
 
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -864,6 +912,29 @@
     }
     .lump-month-row .n-input { width: 90px; }
 
+    .target-date-row { display: flex; gap: 8px; margin-bottom: 4px; }
+    .target-result {
+      font-size: 0.8125rem;
+      color: var(--text-2);
+      min-height: 1.4em;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+    .target-result .target-extra { color: var(--success-dark); font-weight: 600; }
+    .target-result .target-on-track { color: var(--text-3); }
+    #targetApplyBtn {
+      font-size: 0.75rem;
+      padding: 3px 10px;
+      background: var(--primary);
+      color: #fff;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    #targetApplyBtn:hover { background: var(--primary-dark); }
+
     /* Reduced motion */
     @media (prefers-reduced-motion: reduce) {
       *, *::before, *::after { transition: none !important; animation: none !important; }
@@ -1185,6 +1256,21 @@
         </div>
       </div>
 
+      <!-- Pay off by date (reverse calculator) -->
+      <div class="field" id="targetDateField">
+        <div class="field-top">
+          <label>Pay off by</label>
+        </div>
+        <div class="target-date-row" id="targetDateRow">
+          <select id="targetMonth" class="date-select" aria-label="Target payoff month"></select>
+          <select id="targetYear" class="date-select" aria-label="Target payoff year"></select>
+        </div>
+        <div class="target-result" id="targetResult" aria-live="polite">
+          <span id="targetMsg"></span>
+          <button id="targetApplyBtn" type="button" hidden>Apply</button>
+        </div>
+      </div>
+
     </div><!-- /inputs-body -->
   </div><!-- /card -->
 
@@ -1339,7 +1425,8 @@
     <a href="https://decide.saltnfork.com">Decisions</a> ·
     <a href="https://learn.saltnfork.com">Learn</a> ·
     <a href="https://split.saltnfork.com">Bill Split</a> ·
-    <a href="https://rate.saltnfork.com">Rate Calculator</a>
+    <a href="https://rate.saltnfork.com">Rate Calculator</a> ·
+    <a href="https://lawsearch.saltnfork.com">Law Search</a>
   </p>
   <p>A <a href="https://saltnfork.com">Salt n' Fork</a> Project · &copy; <span id="footerYear"></span></p>
 </footer>
@@ -1369,6 +1456,7 @@
   };
 
   let savedScenario = null;
+  var computeTargetDate = null;
 
   /* ════════════════════════════════════════
      MATH
@@ -1721,6 +1809,8 @@
       savedHead.hidden = true;
       sCells.forEach(id => { document.getElementById(id).hidden = true; });
     }
+
+    if (computeTargetDate) computeTargetDate();
   }
 
   /* ════════════════════════════════════════
@@ -1974,6 +2064,101 @@
       S.startYear = +this.value;
       recalc();
     });
+  })();
+
+  /* ════════════════════════════════════════
+     PAY OFF BY DATE (reverse calculator)
+  ════════════════════════════════════════ */
+  (function() {
+    var tMonthSel  = document.getElementById('targetMonth');
+    var tYearSel   = document.getElementById('targetYear');
+    var tMsg       = document.getElementById('targetMsg');
+    var tApplyBtn  = document.getElementById('targetApplyBtn');
+
+    // Populate month dropdown
+    var months = ['January','February','March','April','May','June',
+                  'July','August','September','October','November','December'];
+    var mp = document.createElement('option');
+    mp.value = ''; mp.textContent = 'Month'; mp.disabled = true; mp.selected = true;
+    tMonthSel.appendChild(mp);
+    months.forEach(function(m, i) {
+      var o = document.createElement('option');
+      o.value = i + 1; o.textContent = m;
+      tMonthSel.appendChild(o);
+    });
+
+    // Populate year dropdown: curYear-1 to curYear+40
+    var curYear = new Date().getFullYear();
+    var yp = document.createElement('option');
+    yp.value = ''; yp.textContent = 'Year'; yp.disabled = true; yp.selected = true;
+    tYearSel.appendChild(yp);
+    for (var y = curYear - 1; y <= curYear + 40; y++) {
+      var o = document.createElement('option');
+      o.value = y; o.textContent = y;
+      tYearSel.appendChild(o);
+    }
+
+    var pendingExtra = 0;
+
+    computeTargetDate = function() {
+      var tm = parseInt(tMonthSel.value);
+      var ty = parseInt(tYearSel.value);
+
+      if (!tm || !ty) {
+        tMsg.textContent = '';
+        tMsg.className = '';
+        tApplyBtn.hidden = true;
+        return;
+      }
+
+      var targetMonths = (ty - S.startYear) * 12 + (tm - S.startMonth);
+
+      if (targetMonths <= 0) {
+        tMsg.textContent = 'Choose a future date';
+        tMsg.className = 'target-on-track';
+        tApplyBtn.hidden = true;
+        return;
+      }
+
+      var auto = S.calcPayment;
+      var currentBasePmt = S.biweekly ? auto : (S.paymentOverridden ? S.manualPayment : auto);
+
+      if (targetMonths >= S.term) {
+        tMsg.textContent = 'No extra needed — you\'re on track';
+        tMsg.className = 'target-on-track';
+        tApplyBtn.hidden = true;
+        return;
+      }
+
+      var requiredTotal = stdPayment(S.balance, S.rate, targetMonths);
+      var requiredExtra = Math.max(0, requiredTotal - currentBasePmt);
+      var rounded = Math.round(requiredExtra);
+
+      if (rounded < 1) {
+        tMsg.textContent = 'No extra needed';
+        tMsg.className = 'target-on-track';
+        tApplyBtn.hidden = true;
+        return;
+      }
+
+      pendingExtra = rounded;
+      tMsg.innerHTML = 'Add <span class="target-extra">' + fmtI(rounded) + '/mo</span>';
+      tMsg.className = '';
+      tApplyBtn.hidden = false;
+    };
+
+    tApplyBtn.addEventListener('click', function() {
+      S.extra = pendingExtra;
+      var inp = document.getElementById('extra');
+      var sld = document.getElementById('extraSlider');
+      inp.value = pendingExtra;
+      sld.value = Math.min(pendingExtra, +sld.max);
+      setFill(sld);
+      recalc();
+    });
+
+    tMonthSel.addEventListener('change', computeTargetDate);
+    tYearSel.addEventListener('change', computeTargetDate);
   })();
 
   /* ════════════════════════════════════════
