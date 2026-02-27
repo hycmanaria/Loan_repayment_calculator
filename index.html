@@ -288,6 +288,9 @@
     /* Monthly payment — full width input, no slider */
     .payment-row { display: flex; align-items: center; gap: 10px; }
     #payment { width: 140px; }
+    .input-prefix-wrap { position: relative; display: flex; align-items: center; }
+    .input-prefix { position: absolute; left: 10px; color: var(--text-secondary); pointer-events: none; font-size: 0.9rem; }
+    .input-prefix-wrap .n-input { padding-left: 22px; }
     .reset-btn {
       font-size: 0.75rem;
       font-weight: 500;
@@ -589,6 +592,7 @@
     }
     .amort-table tbody tr.early-payoff td { font-weight: 700; }
     .amort-table tbody tr.dimmed td { opacity: 0.3; }
+    .saved-col { background: var(--surface-2, #f4f4f8); }
 
     /* Error state */
     .error-msg {
@@ -1115,7 +1119,7 @@
           <input type="text" inputmode="numeric" pattern="[0-9,]*" class="n-input" id="balance"
             aria-label="Loan balance">
           <input type="range" id="balanceSlider"
-            min="500" max="2000000" step="1000" value="20000"
+            min="0" max="1000" step="1" value="445"
             aria-label="Loan balance slider">
         </div>
       </div>
@@ -1168,9 +1172,11 @@
             aria-label="Reset to calculated payment">↺ reset</button>
         </div>
         <div class="payment-row">
-          <input type="number" class="n-input" id="payment"
-            min="1" step="0.01"
-            aria-label="Monthly payment amount">
+          <div class="input-prefix-wrap">
+            <span class="input-prefix">$</span>
+            <input type="text" inputmode="decimal" class="n-input" id="payment"
+              aria-label="Monthly payment amount">
+          </div>
         </div>
       </div>
 
@@ -1604,9 +1610,14 @@
     setFill(sld);
   }
 
-  /* ── Comma-formatted text input (balance only) ── */
-  function formatComma(n) { return Math.round(n).toLocaleString('en-US'); }
-  function parseComma(s)  { return parseFloat(String(s).replace(/,/g, '')) || 0; }
+  /* ── Comma-formatted text input ── */
+  function formatComma(n)    { return Math.round(n).toLocaleString('en-US'); }
+  function formatCommaDec(n) { return (+n).toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2}); }
+  function parseComma(s)     { return parseFloat(String(s).replace(/,/g, '')) || 0; }
+
+  /* ── Balance slider log mapping ── */
+  function balFromSlider(v) { return Math.round(500 * Math.pow(4000, v / 1000)); }
+  function sliderFromBal(b) { return Math.round(1000 * Math.log(b / 500) / Math.log(4000)); }
 
   function linkPairText(inputId, sliderId, stateKey) {
     const inp = document.getElementById(inputId);
@@ -1656,11 +1667,11 @@
 
     // When bi-weekly is active, always show the standard auto payment
     if (S.biweekly) {
-      paymentEl.value = auto.toFixed(2);
+      paymentEl.value = formatCommaDec(auto);
       paymentEl.classList.remove('overridden');
       resetBtn.classList.remove('visible');
     } else if (!S.paymentOverridden) {
-      paymentEl.value = auto.toFixed(2);
+      paymentEl.value = formatCommaDec(auto);
       paymentEl.classList.remove('overridden');
       resetBtn.classList.remove('visible');
       S.manualPayment = auto;
@@ -1712,7 +1723,7 @@
 
     // Refresh table if open
     if (!document.getElementById('tableWrap').hidden) {
-      buildTable(current.rows, withExtra ? withExtra.rows.length : null);
+      buildTable(current.rows, withExtra ? withExtra.rows : null, savedScenario ? savedScenario.rows : null);
     }
 
     updateSaveBtn();
@@ -1846,26 +1857,57 @@
   /* ════════════════════════════════════════
      AMORTIZATION TABLE
   ════════════════════════════════════════ */
-  function buildTable(currentRows, extraLength) {
+  function buildTable(currentRows, extraRows, savedRows) {
+    // Dynamic thead
+    const thead = document.querySelector('.amort-table thead tr');
+    let headers = `<th scope="col">Month</th><th scope="col">Payment</th><th scope="col">Principal</th><th scope="col">Interest</th><th scope="col">Balance</th>`;
+    if (extraRows) headers += `<th scope="col">Extra Pmt</th><th scope="col">Balance (w/ Extra)</th>`;
+    if (savedRows) headers += `<th scope="col" class="saved-col">Scenario Pmt</th><th scope="col" class="saved-col">Balance (Scenario)</th>`;
+    thead.innerHTML = headers;
+
     const tbody = document.getElementById('tableBody');
     const frag  = document.createDocumentFragment();
 
     currentRows.forEach((row, i) => {
       const tr  = document.createElement('tr');
       const idx = i + 1;
-      const isEarly  = extraLength !== null && idx === extraLength;
-      const isDimmed = extraLength !== null && idx > extraLength;
+      const isEarlyExtra = extraRows && idx === extraRows.length;
+      const isEarlySaved = savedRows && idx === savedRows.length;
+      const isDimmed     = extraRows && idx > extraRows.length;
 
-      if (isEarly)  tr.classList.add('early-payoff');
+      if (isEarlyExtra || isEarlySaved) tr.classList.add('early-payoff');
       if (isDimmed) tr.classList.add('dimmed');
 
-      tr.innerHTML = `
-        <td>${row.month}${isEarly ? ' ★' : ''}</td>
+      let starMark = '';
+      if (isEarlyExtra) starMark += ' ★';
+      if (isEarlySaved && !isEarlyExtra) starMark += ' ★★';
+
+      let html = `
+        <td>${row.month}${starMark}</td>
         <td>${fmtN(row.payment)}</td>
         <td>${fmtN(row.principal)}</td>
         <td>${fmtN(row.interest)}</td>
         <td>${fmtN(row.balance)}</td>
       `;
+
+      if (extraRows) {
+        if (i < extraRows.length) {
+          const extraAmt = extraRows[i].payment - currentRows[i].payment;
+          html += `<td>${extraAmt > 0.005 ? fmtN(extraAmt) : '—'}</td><td>${fmtN(extraRows[i].balance)}</td>`;
+        } else {
+          html += `<td>—</td><td>Paid off</td>`;
+        }
+      }
+
+      if (savedRows) {
+        if (i < savedRows.length) {
+          html += `<td class="saved-col">${fmtN(savedRows[i].payment)}</td><td class="saved-col">${fmtN(savedRows[i].balance)}</td>`;
+        } else {
+          html += `<td class="saved-col">—</td><td class="saved-col">Paid off</td>`;
+        }
+      }
+
+      tr.innerHTML = html;
       frag.appendChild(tr);
     });
 
@@ -1895,7 +1937,7 @@
       const withExtra = hasExtras
         ? amortize(S.balance, S.rate, effectivePmt, extraMonthly(), S.lumpSum, S.lumpMonth)
         : null;
-      buildTable(current.rows, withExtra ? withExtra.rows.length : null);
+      buildTable(current.rows, withExtra ? withExtra.rows : null, savedScenario ? savedScenario.rows : null);
 
       // Scroll the highlighted row into view
       setTimeout(() => {
@@ -1908,18 +1950,29 @@
   /* ════════════════════════════════════════
      MONTHLY PAYMENT OVERRIDE
   ════════════════════════════════════════ */
-  document.getElementById('payment').addEventListener('input', function () {
-    const v = parseFloat(this.value);
-    if (isNaN(v) || v <= 0) return;
-    const diff = Math.abs(v - S.calcPayment);
-    if (diff > 0.01) {
-      S.paymentOverridden = true;
-      S.manualPayment = v;
-    } else {
-      S.paymentOverridden = false;
-    }
-    recalc();
-  });
+  (function setupPaymentInput() {
+    const paymentEl = document.getElementById('payment');
+    paymentEl.addEventListener('input', function () {
+      const v = parseComma(this.value);
+      if (isNaN(v) || v <= 0) return;
+      const diff = Math.abs(v - S.calcPayment);
+      if (diff > 0.01) {
+        S.paymentOverridden = true;
+        S.manualPayment = v;
+      } else {
+        S.paymentOverridden = false;
+      }
+      recalc();
+    });
+    paymentEl.addEventListener('focus', function () {
+      const raw = parseComma(this.value);
+      if (raw) this.value = raw.toFixed(2);
+    });
+    paymentEl.addEventListener('blur', function () {
+      const raw = parseComma(this.value);
+      if (raw) this.value = formatCommaDec(raw);
+    });
+  })();
 
   document.getElementById('resetBtn').addEventListener('click', function (e) {
     e.preventDefault();
@@ -1945,7 +1998,27 @@
   /* ════════════════════════════════════════
      LINK SLIDER/INPUT PAIRS
   ════════════════════════════════════════ */
-  linkPairText('balance', 'balanceSlider', 'balance');
+  (function setupBalanceInput() {
+    const inp = document.getElementById('balance');
+    const sld = document.getElementById('balanceSlider');
+    inp.addEventListener('input', () => {
+      const v = parseComma(inp.value);
+      if (!v) return;
+      S.balance = v;
+      sld.value = sliderFromBal(Math.min(Math.max(v, 500), 2000000));
+      setFill(sld); recalc();
+    });
+    inp.addEventListener('focus', () => { inp.value = S.balance; });
+    inp.addEventListener('blur',  () => { inp.value = formatComma(S.balance); });
+    sld.addEventListener('input', () => {
+      const b = balFromSlider(parseFloat(sld.value));
+      inp.value = formatComma(b); setFill(sld);
+      S.balance = b; recalc();
+    });
+    inp.value = formatComma(S.balance);
+    sld.value = sliderFromBal(S.balance);
+    setFill(sld);
+  })();
   linkPair('rate',    'rateSlider',    'rate');
   (function setupTermInput() {
     const inp = document.getElementById('term');
@@ -2350,16 +2423,21 @@
           setFill(document.getElementById(sldId));
         }
       };
-      set('b', 'balance', 'balanceSlider', 'balance');
-      // Comma-format the balance input after loading from hash
-      if (p.has('b')) document.getElementById('balance').value = formatComma(S.balance);
+      set('b', 'balance', null, 'balance');
+      // Comma-format balance and set log-scale slider after loading from hash
+      if (p.has('b')) {
+        document.getElementById('balance').value = formatComma(S.balance);
+        const bSld = document.getElementById('balanceSlider');
+        bSld.value = sliderFromBal(S.balance);
+        setFill(bSld);
+      }
       set('r', 'rate',    'rateSlider',    'rate');
       set('t', 'term',    'termSlider',    'term');
       set('e', 'extra',   'extraSlider',   'extra');
       if (p.has('p')) {
         S.paymentOverridden = true;
         S.manualPayment = parseFloat(p.get('p'));
-        document.getElementById('payment').value = S.manualPayment.toFixed(2);
+        document.getElementById('payment').value = formatCommaDec(S.manualPayment);
       }
       // Start date
       if (p.has('sd')) {
