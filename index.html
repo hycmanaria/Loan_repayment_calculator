@@ -553,6 +553,7 @@
       border-radius: var(--radius);
       overflow-x: auto;
       box-shadow: var(--shadow);
+      grid-column: 1 / -1;
     }
     .amort-table {
       width: 100%;
@@ -592,7 +593,18 @@
     }
     .amort-table tbody tr.early-payoff td { font-weight: 700; }
     .amort-table tbody tr.dimmed td { opacity: 0.3; }
-    .saved-col { background: var(--surface-2, #f4f4f8); }
+
+    /* Extra payment columns — green */
+    .amort-table th.extra-col { color: var(--success-dark, #059669); background: var(--success-bg); }
+    .amort-table td.extra-col { color: var(--success-dark, #059669); background: var(--success-bg); }
+    [data-theme="dark"] .amort-table th.extra-col,
+    [data-theme="dark"] .amort-table td.extra-col { color: #34d399; }
+
+    /* Saved scenario columns — purple */
+    .amort-table th.saved-col { color: #7c3aed; background: #f5f3ff; }
+    .amort-table td.saved-col { color: #7c3aed; background: #f5f3ff; }
+    [data-theme="dark"] .amort-table th.saved-col,
+    [data-theme="dark"] .amort-table td.saved-col { color: #a78bfa; background: #2d1a4d; }
 
     /* Error state */
     .error-msg {
@@ -709,7 +721,7 @@
     .theme-toggle:hover { border-color: var(--border-strong); color: var(--text); }
 
     /* ── Table actions row (toggle + CSV) ── */
-    .table-actions { display: flex; gap: 8px; align-items: stretch; }
+    .table-actions { display: flex; gap: 8px; align-items: stretch; grid-column: 1 / -1; }
     .table-actions .toggle-btn { flex: 1; width: auto; }
     .csv-btn {
       flex-shrink: 0;
@@ -1861,7 +1873,7 @@
     // Dynamic thead
     const thead = document.querySelector('.amort-table thead tr');
     let headers = `<th scope="col">Month</th><th scope="col">Payment</th><th scope="col">Principal</th><th scope="col">Interest</th><th scope="col">Balance</th>`;
-    if (extraRows) headers += `<th scope="col">Extra Pmt</th><th scope="col">Balance (w/ Extra)</th>`;
+    if (extraRows) headers += `<th scope="col" class="extra-col">Extra Pmt</th><th scope="col" class="extra-col">Balance (w/ Extra)</th>`;
     if (savedRows) headers += `<th scope="col" class="saved-col">Scenario Pmt</th><th scope="col" class="saved-col">Balance (Scenario)</th>`;
     thead.innerHTML = headers;
 
@@ -1893,9 +1905,9 @@
       if (extraRows) {
         if (i < extraRows.length) {
           const extraAmt = extraRows[i].payment - currentRows[i].payment;
-          html += `<td>${extraAmt > 0.005 ? fmtN(extraAmt) : '—'}</td><td>${fmtN(extraRows[i].balance)}</td>`;
+          html += `<td class="extra-col">${extraAmt > 0.005 ? fmtN(extraAmt) : '—'}</td><td class="extra-col">${fmtN(extraRows[i].balance)}</td>`;
         } else {
-          html += `<td>—</td><td>Paid off</td>`;
+          html += `<td class="extra-col">—</td><td class="extra-col">Paid off</td>`;
         }
       }
 
