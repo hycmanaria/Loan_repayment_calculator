@@ -4,11 +4,113 @@
 
 ## 🔄 Next Session - Start Here
 
-**Last session:** 2026-02-27 (Session 14)
-**Context:** FAQ section fully implemented as plain visible text, full-width. Ad slot also fixed for full-width. Playwright workflow established for visual verification.
+**Last session:** 2026-02-27 (Session 16)
+**Context:** Implemented short links for the "Copy results link" button. Feature is code-complete; needs Upstash env vars added in Cloudflare Pages dashboard before it will work in production.
 
 ### Pending Tasks
-- [x] Validate at https://search.google.com/test/rich-results — ✅ 2 valid FAQ items + 1 SoftwareApplication detected (2026-02-27)
+- [ ] Add Upstash env vars to Cloudflare Pages dashboard (see Session 16 for details)
+- [ ] Push to main and test short link end-to-end on payoff.saltnfork.com
+- [ ] Validate FAQ at https://search.google.com/test/rich-results after deploying
+
+---
+
+## Session: 2026-02-27 (Session 16) — Short Link Implementation
+
+### What Was Done
+- Implemented server-side short links for the "Copy results link" button
+- Created two Cloudflare Pages Functions for the API
+- Modified `index.html`: extracted `buildParams()`, updated `loadHash()`, rewrote copy-link handler, replaced sync INIT with async IIFE
+
+### Files Created
+- `functions/api/s/index.js` — POST endpoint: generates 8-char code, stores URLSearchParams payload in Upstash Redis with `po_` prefix, 90-day TTL
+- `functions/api/s/[code].js` — GET endpoint: retrieves payload by code from Redis
+
+**`functions/api/s/index.js`:**
+```javascript
+export async function onRequestPost(context) {
+  const { request, env } = context;
+  let body;
+  try { body = await request.json(); } catch { return new Response(null, { status: 400 }); }
+
+  const { p } = body;
+  if (!p || typeof p !== 'string') return new Response(null, { status: 400 });
+
+  const url   = env.UPSTASH_REDIS_REST_URL;
+  const token = env.UPSTASH_REDIS_REST_TOKEN;
+
+  const chars = 'abcdefghijklmnopqrstuvwxyz0123456789';
+  let code;
+  for (let i = 0; i < 5; i++) {
+    code = Array.from({ length: 8 }, () => chars[Math.floor(Math.random() * chars.length)]).join('');
+    const check = await fetch(url, {
+      method: 'POST',
+      headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' },
+      body: JSON.stringify(['GET', 'po_' + code])
+    });
+    const { result } = await check.json();
+    if (result === null) break;
+  }
+
+  await fetch(url, {
+    method: 'POST',
+    headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' },
+    body: JSON.stringify(['SET', 'po_' + code, p, 'EX', 7776000])
+  });
+
+  return new Response(JSON.stringify({ code }), {
+    headers: { 'Content-Type': 'application/json' }
+  });
+}
+```
+
+**`functions/api/s/[code].js`:**
+```javascript
+export async function onRequestGet(context) {
+  const { params, env } = context;
+  const code = params.code;
+  if (!code) return new Response(null, { status: 400 });
+
+  const url   = env.UPSTASH_REDIS_REST_URL;
+  const token = env.UPSTASH_REDIS_REST_TOKEN;
+
+  const response = await fetch(url, {
+    method: 'POST',
+    headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' },
+    body: JSON.stringify(['GET', 'po_' + code])
+  });
+  const { result } = await response.json();
+
+  if (result === null) return new Response(null, { status: 404 });
+  return new Response(JSON.stringify({ p: result }), {
+    headers: { 'Content-Type': 'application/json' }
+  });
+}
+```
+
+### Files Modified
+- `index.html`
+  - `buildParams()` — new function, extracted from `encodeHash()`, returns URLSearchParams string
+  - `encodeHash()` — simplified to call `buildParams()`
+  - `loadHash(hashStr)` — added optional string param; falls back to `window.location.hash.slice(1)` if not provided
+  - COPY LINK IIFE — async handler: POSTs to `/api/s`, shows "Shortening…" state, falls back to long `#` URL if API fails
+  - INIT block — replaced with async IIFE: checks `?s=` param, fetches payload from `/api/s/:code`, hydrates via `loadHash(p)`, cleans URL with `history.replaceState`
+
+### Decisions Made
+- Cloudflare Pages Functions over Vercel (site is already on CF Pages — no separate deployment)
+- Reuse Bill Split Upstash DB with `po_` key prefix to avoid collisions
+- Upstash REST JSON array format: `['SET', key, value, 'EX', ttl]` (NOT URL path segment — that was the Bug in Bill Split fixed in Session 9)
+- No CORS handler — frontend and API are same-origin
+
+### External Changes Required (not in repo)
+**Cloudflare Pages → loan_repayment_calculator → Settings → Environment Variables:**
+- `UPSTASH_REDIS_REST_URL` — from Upstash console → your DB → REST API tab
+- `UPSTASH_REDIS_REST_TOKEN` — from same location
+- Add for both Production and Preview environments
+
+### Open Items
+- [ ] Add Upstash env vars to Cloudflare Pages dashboard (above)
+- [ ] Push to main and test short link end-to-end
+- [ ] Validate FAQ at https://search.google.com/test/rich-results
 
 ---
 
@@ -31,6 +133,27 @@
 ### Open Items
 - [x] Add visible FAQ accordion to `index.html` ✅ Done in Session 13
 - [ ] Validate at https://search.google.com/test/rich-results after deploying
+
+---
+
+## Session: 2026-02-27 (Session 15) — Short Link Research
+
+### What Was Done
+- Identified that the "Copy results link" button produces a long `#b=...&r=...` URL that looks scary when pasted into WhatsApp etc.
+- Researched the short link implementation from Bill Split (Session 9) to understand the approach
+- Determined recommended implementation: Cloudflare Pages Functions + Upstash Redis (same REST API pattern as Bill Split)
+
+### Files Modified
+- None — research/planning session only
+
+### Decisions Made
+- Use Cloudflare Pages Functions instead of Vercel (site is already on Cloudflare Pages — simpler)
+- Reuse Upstash Redis free account from Bill Split (or create a second DB — keys won't collide if prefixed)
+- Payload keys already compact in this project — no compression step needed
+- Must use Upstash REST JSON array format (`["SET", code, payload, "EX", ttl]`) — NOT URL path segment (that was the bug hit in Bill Split)
+
+### Open Items
+- [ ] Implement short link feature for "Copy results link" button (Cloudflare Pages Functions + Upstash Redis)
 
 ---
 

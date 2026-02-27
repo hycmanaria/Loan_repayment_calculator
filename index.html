@@ -2459,8 +2459,8 @@
   /* ════════════════════════════════════════
      URL HASH STATE
   ════════════════════════════════════════ */
-  function encodeHash() {
-    const p = new URLSearchParams({
+  function buildParams() {
+    return new URLSearchParams({
       b: S.balance,
       r: S.rate,
       t: S.term,
@@ -2478,12 +2478,15 @@
         pl: savedScenario.label,
         pd: savedScenario.payoffDate,
       } : {}),
-    });
-    history.replaceState(null, '', '#' + p.toString());
+    }).toString();
   }
 
-  function loadHash() {
-    const hash = window.location.hash.slice(1);
+  function encodeHash() {
+    history.replaceState(null, '', '#' + buildParams());
+  }
+
+  function loadHash(hashStr) {
+    const hash = hashStr !== undefined ? hashStr : window.location.hash.slice(1);
     if (!hash) return;
     try {
       const p = new URLSearchParams(hash);
@@ -2604,18 +2607,41 @@
     var iconLink  = document.getElementById('iconLink');
     var iconCheck = document.getElementById('iconCheck');
     var copyLabel = document.getElementById('copyLabel');
-    btn.addEventListener('click', function() {
-      encodeHash();
-      navigator.clipboard.writeText(location.href).then(function() {
-        iconLink.style.display  = 'none';
-        iconCheck.style.display = '';
-        copyLabel.textContent   = 'Copied!';
-        setTimeout(function() {
-          iconLink.style.display  = '';
-          iconCheck.style.display = 'none';
-          copyLabel.textContent   = 'Copy results link';
-        }, 2000);
-      });
+    btn.addEventListener('click', async function() {
+      btn.disabled = true;
+      iconLink.style.display = 'none';
+      copyLabel.textContent  = 'Shortening\u2026';
+
+      const payload = buildParams();
+      let shortUrl  = null;
+
+      try {
+        const res = await fetch('/api/s', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ p: payload })
+        });
+        if (res.ok) {
+          const { code } = await res.json();
+          shortUrl = 'https://payoff.saltnfork.com/?s=' + code;
+        }
+      } catch (_) {}
+
+      if (!shortUrl) {
+        encodeHash();
+        shortUrl = location.href;
+      }
+
+      try { await navigator.clipboard.writeText(shortUrl); } catch (_) {}
+
+      iconCheck.style.display = '';
+      copyLabel.textContent   = 'Link Copied!';
+      btn.disabled = false;
+      setTimeout(function() {
+        iconLink.style.display  = '';
+        iconCheck.style.display = 'none';
+        copyLabel.textContent   = 'Copy results link';
+      }, 2000);
     });
   })();
 
@@ -2764,9 +2790,27 @@
   /* ════════════════════════════════════════
      INIT
   ════════════════════════════════════════ */
-  loadHash();
-  recalc();
-  document.getElementById('footerYear').textContent = new Date().getFullYear();
+  (async function() {
+    const sCode = new URLSearchParams(location.search).get('s');
+    if (sCode) {
+      try {
+        const res = await fetch('/api/s/' + sCode);
+        if (res.ok) {
+          const { p } = await res.json();
+          loadHash(p);
+          history.replaceState(null, '', location.pathname);
+        } else {
+          loadHash();
+        }
+      } catch (_) {
+        loadHash();
+      }
+    } else {
+      loadHash();
+    }
+    recalc();
+    document.getElementById('footerYear').textContent = new Date().getFullYear();
+  })();
 </script>
 
 </body>
