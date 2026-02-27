@@ -1,11 +1,13 @@
 {
   "name": "Loan Payoff Calculator",
-  "description": "Single-file loan repayment calculator with extra payment comparison, amortization schedule, canvas chart, chart tooltips, presets, scenario comparison, refinance calculator, named scenario save/load, FAQ structured data, and Pay Off By Date reverse calculator.",
+  "description": "Single-file loan repayment calculator with extra payment comparison, amortization schedule, canvas chart, chart tooltips, presets, scenario comparison, refinance calculator, named scenario save/load, FAQ structured data, Pay Off By Date reverse calculator, and short link sharing.",
   "status": "active",
   "priority": "medium",
   "lastUpdated": "2026-02-27",
-  "lastSession": 14,
-  "currentFocus": "FAQ rich results validated — 2 valid FAQ items + 1 SoftwareApplication detected by Google.",
-  "todos": [],
+  "lastSession": 16,
+  "currentFocus": "Implemented short links for the 'Copy results link' button — Cloudflare Pages Functions + Upstash Redis. Deployed and confirmed working.",
+  "todos": [
+    { "id": 1, "text": "Validate FAQ at search.google.com/test/rich-results", "done": false }
+  ],
   "notes": "Single .html file, no dependencies. All CSS and JS inline. Currency via Intl.NumberFormat + navigator.language detection. Playwright path: /home/ub-rissa/.npm/_npx/e41f203b7505f1fb/node_modules/playwright"
 }
