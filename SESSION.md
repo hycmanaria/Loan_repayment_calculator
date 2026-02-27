@@ -5,12 +5,10 @@
 ## 🔄 Next Session - Start Here
 
 **Last session:** 2026-02-27 (Session 16)
-**Context:** Implemented short links for the "Copy results link" button. Feature is code-complete; needs Upstash env vars added in Cloudflare Pages dashboard before it will work in production.
+**Context:** Short link feature shipped and confirmed working. FAQ rich results validated. No pending tasks — waiting on user feedback.
 
 ### Pending Tasks
-- [ ] Add Upstash env vars to Cloudflare Pages dashboard (see Session 16 for details)
-- [ ] Push to main and test short link end-to-end on payoff.saltnfork.com
-- [ ] Validate FAQ at https://search.google.com/test/rich-results after deploying
+- None
 
 ---
 

@@ -5,9 +5,7 @@
   "priority": "medium",
   "lastUpdated": "2026-02-27",
   "lastSession": 16,
-  "currentFocus": "Implemented short links for the 'Copy results link' button — Cloudflare Pages Functions + Upstash Redis. Deployed and confirmed working.",
-  "todos": [
-    { "id": 1, "text": "Validate FAQ at search.google.com/test/rich-results", "done": false }
-  ],
+  "currentFocus": "Short links implemented and confirmed working. FAQ rich results validated. Waiting on user feedback.",
+  "todos": [],
   "notes": "Single .html file, no dependencies. All CSS and JS inline. Currency via Intl.NumberFormat + navigator.language detection. Playwright path: /home/ub-rissa/.npm/_npx/e41f203b7505f1fb/node_modules/playwright"
 }
