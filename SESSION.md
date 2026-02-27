@@ -4,11 +4,76 @@
 
 ## 🔄 Next Session - Start Here
 
-**Last session:** 2026-02-26 (Session 11)
-**Context:** CSV export updated to match amortization table columns (extra + pinned), site metadata added to top of file, filename updated. Committed and pushed to main.
+**Last session:** 2026-02-27 (Session 14)
+**Context:** FAQ section fully implemented as plain visible text, full-width. Ad slot also fixed for full-width. Playwright workflow established for visual verification.
 
 ### Pending Tasks
-- [ ] Validate FAQ schema at https://search.google.com/test/rich-results
+- [ ] Validate at https://search.google.com/test/rich-results after deploying
+
+---
+
+## Session: 2026-02-26 (Session 12) — FAQ Schema Validation
+
+### What Was Done
+- Validated the FAQPage JSON-LD schema against Google's Rich Results requirements
+- Confirmed the schema is live and deployed at payoff.saltnfork.com (both JSON-LD blocks present)
+- Discovered a real issue: FAQ Q&As are only in JSON-LD, not visible in HTML — Google requires on-page visibility
+- Documented fix needed for next session: add visible `<details>`/`<summary>` FAQ accordion
+
+### Files Modified
+- None (investigation only — no code changes)
+
+### Decisions Made
+- FAQ JSON-LD structure is fully valid (correct `@type`, `mainEntity` array, all 5 Q&A objects)
+- The fix is adding visible HTML only — no changes to the JSON-LD needed
+- Rich Results Test tool (search.google.com/test/rich-results) requires interactive JS — can't run headlessly; will need to validate manually after the HTML section is added
+
+### Open Items
+- [x] Add visible FAQ accordion to `index.html` ✅ Done in Session 13
+- [ ] Validate at https://search.google.com/test/rich-results after deploying
+
+---
+
+## Session: 2026-02-27 (Session 14) — FAQ Section & Ad Slot Layout Fixes
+
+### What Was Done
+- Converted FAQ from `<details>`/`<summary>` accordion to plain always-visible text in a single container
+- Fixed FAQ section being stuck in the left grid column — added `grid-column: 1 / -1` to span full width
+- Fixed ad slot (`#adSlot`) with same `grid-column: 1 / -1` so it's full-width when activated
+- Moved FAQ section inside `<main>` (after amortization table, before `</main>`) so it's contained in the page layout
+- Established Playwright visual verification workflow — use element screenshot before reporting done
+- Used Playwright to verify both FAQ and ad slot render correctly at full width
+
+### Files Modified
+- `index.html` — CSS updated (`.faq-section` gets card styles + `grid-column: 1 / -1`, `.faq-item` stripped to plain div); HTML converted from `<details>`/`<summary>` to `<div>`+`<h3>`+`<p>`; ad slot inline style updated
+
+### Decisions Made
+- Plain visible text preferred over accordion — simpler, no alignment quirks, Google can read it fine
+- `grid-column: 1 / -1` is the correct fix for any full-width element inside a CSS grid `<main>`
+- Playwright node module path: `/home/ub-rissa/.npm/_npx/e41f203b7505f1fb/node_modules/playwright`
+
+### Open Items
+- [ ] Validate at https://search.google.com/test/rich-results after deploying
+
+---
+
+## Session: 2026-02-26 (Session 13) — Visible FAQ Accordion
+
+### What Was Done
+- Added visible FAQ accordion section to `index.html` between `</main>` and scroll buttons
+- 5 `<details>`/`<summary>` items using verbatim Q&A text from JSON-LD schema
+- Added `.faq-section`, `.faq-item`, `.faq-answer` CSS (main, responsive, print)
+
+### Files Modified
+- `index.html` — 4 targeted edits: CSS main styles, CSS responsive (`≤780px`), CSS print, HTML section
+
+### Decisions Made
+- Used `<details>`/`<summary>` — Google can read closed `<details>` content as it's always in the DOM
+- Placed section between `</main>` and `.scroll-btns` so it's outside the grid layout
+- No changes to JSON-LD needed
+
+### Open Items
+- [x] Validate at https://search.google.com/test/rich-results after deploying — carried forward
 
 ---
 

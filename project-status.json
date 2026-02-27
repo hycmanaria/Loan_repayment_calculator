@@ -3,11 +3,11 @@
   "description": "Single-file loan repayment calculator with extra payment comparison, amortization schedule, canvas chart, chart tooltips, presets, scenario comparison, refinance calculator, named scenario save/load, FAQ structured data, and Pay Off By Date reverse calculator.",
   "status": "active",
   "priority": "medium",
-  "lastUpdated": "2026-02-26",
-  "lastSession": 11,
-  "currentFocus": "CSV export overhauled: matches amortization table columns (extra+pinned), site metadata at top, filename updated to payoff.saltnfork.com-loan-amortization.csv.",
+  "lastUpdated": "2026-02-27",
+  "lastSession": 14,
+  "currentFocus": "FAQ section added as visible plain text (full-width, single container). Ad slot prepped for full-width display.",
   "todos": [
-    { "id": 1, "text": "Validate FAQ schema at search.google.com/test/rich-results", "done": false }
+    { "id": 1, "text": "Validate FAQ rich results at search.google.com/test/rich-results after deploying", "done": false }
   ],
-  "notes": "Single .html file, no dependencies. All CSS and JS inline. Currency via Intl.NumberFormat + navigator.language detection."
+  "notes": "Single .html file, no dependencies. All CSS and JS inline. Currency via Intl.NumberFormat + navigator.language detection. Playwright path: /home/ub-rissa/.npm/_npx/e41f203b7505f1fb/node_modules/playwright"
 }

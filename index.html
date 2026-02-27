@@ -638,6 +638,7 @@
         gap: 14px;
       }
       .header-sub { display: none; }
+      .faq-section { padding: 0 14px 20px; }
     }
 
     @media (max-width: 420px) {
@@ -671,6 +672,38 @@
       font-size: 0.8125rem;
       color: var(--text-3);
       margin: 12px 0 0;
+      line-height: 1.55;
+    }
+
+    /* ── FAQ Section ── */
+    .faq-section {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      margin: 0 0 16px;
+      padding: 16px 20px 8px;
+      grid-column: 1 / -1;
+    }
+    .faq-section h2 {
+      font-size: 1rem;
+      font-weight: 600;
+      color: var(--text-2);
+      margin-bottom: 14px;
+    }
+    .faq-item {
+      margin-bottom: 16px;
+    }
+    .faq-item h3 {
+      font-size: 0.875rem;
+      font-weight: 600;
+      color: var(--text);
+      margin: 0 0 4px;
+    }
+    .faq-answer {
+      font-size: 0.8125rem;
+      color: var(--text-3);
+      margin: 0;
       line-height: 1.55;
     }
 
@@ -1077,6 +1110,7 @@
       /* Layout: stack everything single-column */
       main { display: block !important; }
       .card, .how-it-works { margin-bottom: 12pt; }
+      .faq-section { border: 1px solid #ccc !important; box-shadow: none !important; background: #fff !important; }
       .results { display: block !important; }
 
       /* Input summary: show as definition list */
@@ -1416,10 +1450,38 @@
   </div>
 
   <!-- Ad slot — hidden until AdSense approval -->
-  <div id="adSlot" style="display:none">
+  <div id="adSlot" style="display:none; grid-column: 1 / -1;">
     <!-- AdSense ad unit goes here -->
   </div>
 
+  <section class="faq-section" aria-label="Frequently Asked Questions">
+    <h2>Frequently Asked Questions</h2>
+
+    <div class="faq-item">
+      <h3>How do I pay off my loan faster?</h3>
+      <p class="faq-answer">Making extra monthly payments directly reduces your principal balance, which means less interest accrues each month. Even a small extra payment — $50 or $100/mo — can cut years off your loan and save thousands in interest. Use this calculator to see the exact impact.</p>
+    </div>
+
+    <div class="faq-item">
+      <h3>How much interest do I save by making extra payments?</h3>
+      <p class="faq-answer">It depends on your balance, interest rate, and how much extra you pay. Enter your loan details and an extra payment amount to see your exact interest savings and new payoff date — updated instantly.</p>
+    </div>
+
+    <div class="faq-item">
+      <h3>What is an amortization schedule?</h3>
+      <p class="faq-answer">An amortization schedule is a month-by-month breakdown of your loan payments showing how much goes to principal vs. interest each month. Early in a loan, most of your payment is interest. Over time, more goes to principal. This calculator includes a full amortization table you can view or export as CSV.</p>
+    </div>
+
+    <div class="faq-item">
+      <h3>Does paying bi-weekly instead of monthly save money?</h3>
+      <p class="faq-answer">Yes. Bi-weekly payments mean you make 26 half-payments per year — equivalent to 13 monthly payments instead of 12. That one extra payment per year reduces your principal faster, cutting total interest and shortening your loan term.</p>
+    </div>
+
+    <div class="faq-item">
+      <h3>How do I calculate the extra payment needed to pay off my loan by a specific date?</h3>
+      <p class="faq-answer">Use the 'Pay off by' date field in this calculator. Enter your target payoff date and it will instantly show you the exact extra monthly payment required to hit that goal. Click Apply to see the full impact on your amortization schedule.</p>
+    </div>
+  </section>
 
 </main>
 
