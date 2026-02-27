@@ -1874,7 +1874,7 @@
     const thead = document.querySelector('.amort-table thead tr');
     let headers = `<th scope="col">Month</th><th scope="col">Payment</th><th scope="col">Principal</th><th scope="col">Interest</th><th scope="col">Balance</th>`;
     if (extraRows) headers += `<th scope="col" class="extra-col">Extra Pmt</th><th scope="col" class="extra-col">Balance (w/ Extra)</th>`;
-    if (savedRows) headers += `<th scope="col" class="saved-col">Scenario Pmt</th><th scope="col" class="saved-col">Balance (Scenario)</th>`;
+    if (savedRows) headers += `<th scope="col" class="saved-col">Pinned Extra</th><th scope="col" class="saved-col">Balance (Pinned)</th>`;
     thead.innerHTML = headers;
 
     const tbody = document.getElementById('tableBody');
@@ -1913,7 +1913,8 @@
 
       if (savedRows) {
         if (i < savedRows.length) {
-          html += `<td class="saved-col">${fmtN(savedRows[i].payment)}</td><td class="saved-col">${fmtN(savedRows[i].balance)}</td>`;
+          const pinnedExtra = savedRows[i].payment - currentRows[i].payment;
+          html += `<td class="saved-col">${pinnedExtra > 0.005 ? fmtN(pinnedExtra) : '—'}</td><td class="saved-col">${fmtN(savedRows[i].balance)}</td>`;
         } else {
           html += `<td class="saved-col">—</td><td class="saved-col">Paid off</td>`;
         }
