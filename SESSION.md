@@ -4,12 +4,115 @@
 
 ## 🔄 Next Session - Start Here
 
-**Last session:** 2026-02-26 (Session 10)
-**Context:** 4 UX bug fixes + amortization table overhaul. All changes committed to main, ready to push.
+**Last session:** 2026-02-26 (Session 11)
+**Context:** CSV export updated to match amortization table columns (extra + pinned), site metadata added to top of file, filename updated. Committed and pushed to main.
 
 ### Pending Tasks
 - [ ] Validate FAQ schema at https://search.google.com/test/rich-results
-- [ ] Push to origin/main (`git push origin main`)
+
+---
+
+## Session: 2026-02-26 (Session 11) — CSV Export Overhaul
+
+### What Was Done
+- Updated CSV export to match the amortization table exactly (same columns, same logic)
+- Added site metadata to the top 3 rows of every CSV (URL, loan params, generation date)
+- Updated download filename to `payoff.saltnfork.com-loan-amortization.csv`
+
+### Files Modified
+- `index.html` — CSV export section (~line 2560)
+
+### Decisions Made
+
+**Column matching:** CSV now uses the same conditional logic as `buildTable`:
+- Base 5 columns always: Month, Payment, Principal, Interest, Balance
+- Extra columns added when `hasExtras`: Extra Pmt, Balance (w/ Extra)
+- Pinned columns added when `savedScenario` exists: Pinned Extra, Balance (Pinned)
+- Extra Pmt / Pinned Extra both show extra-over-base amount (consistent with table)
+- Post-payoff rows show empty + "Paid off" (same as table)
+
+**Metadata rows:** 3 rows at top of file before a blank row, then the column header:
+```
+"Loan Payoff Calculator","https://payoff.saltnfork.com"
+"Balance","$207,811","Rate","10.51%","Term","60 mo","Payment","$4,467.70"
+"Generated","February 26, 2026"
+(blank)
+Month,Payment,...
+```
+Opens cleanly in Excel/Google Sheets — URL is visible at row 1.
+
+**Filename:** `payoff.saltnfork.com-loan-amortization.csv` — site name prefix for brand recall.
+
+### Key Code (full replacement of CSV export handler)
+
+```javascript
+document.getElementById('csvBtn').addEventListener('click', function() {
+    const auto = S.calcPayment;
+    const currentBasePmt = S.biweekly ? auto : (S.paymentOverridden ? S.manualPayment : auto);
+    const effectivePmt   = S.biweekly ? auto * 13 / 12 : currentBasePmt;
+    const hasExtras = S.extra > 0 || S.biweekly || S.lumpSum > 0;
+    const current   = amortize(S.balance, S.rate, currentBasePmt, 0, 0, 0);
+    const withExtra = hasExtras
+      ? amortize(S.balance, S.rate, effectivePmt, extraMonthly(), S.lumpSum, S.lumpMonth)
+      : null;
+    const savedRows = savedScenario ? savedScenario.rows : null;
+
+    const siteUrl = 'https://payoff.saltnfork.com';
+    const today = new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+
+    const lines = [
+      `"Loan Payoff Calculator","${siteUrl}"`,
+      `"Balance","${fmtI(S.balance)}","Rate","${S.rate.toFixed(2)}%","Term","${S.term} mo","Payment","${fmtN(currentBasePmt)}"`,
+      `"Generated","${today}"`,
+      ``
+    ];
+
+    let header = 'Month,Payment,Principal,Interest,Balance';
+    if (withExtra) header += ',Extra Pmt,Balance (w/ Extra)';
+    if (savedRows)  header += ',Pinned Extra,Balance (Pinned)';
+    lines.push(header);
+
+    current.rows.forEach(function(r, i) {
+      const row = [
+        r.month,
+        r.payment.toFixed(2),
+        r.principal.toFixed(2),
+        r.interest.toFixed(2),
+        r.balance.toFixed(2)
+      ];
+      if (withExtra) {
+        if (withExtra.rows[i]) {
+          const extraAmt = withExtra.rows[i].payment - r.payment;
+          row.push(extraAmt > 0.005 ? extraAmt.toFixed(2) : '0.00');
+          row.push(withExtra.rows[i].balance.toFixed(2));
+        } else {
+          row.push('', 'Paid off');
+        }
+      }
+      if (savedRows) {
+        if (savedRows[i]) {
+          const pinnedAmt = savedRows[i].payment - r.payment;
+          row.push(pinnedAmt > 0.005 ? pinnedAmt.toFixed(2) : '0.00');
+          row.push(savedRows[i].balance.toFixed(2));
+        } else {
+          row.push('', 'Paid off');
+        }
+      }
+      lines.push(row.join(','));
+    });
+
+    const blob = new Blob([lines.join('\n')], { type: 'text/csv' });
+    const a = Object.assign(document.createElement('a'), {
+      href: URL.createObjectURL(blob),
+      download: 'payoff.saltnfork.com-loan-amortization.csv'
+    });
+    a.click();
+    URL.revokeObjectURL(a.href);
+  });
+```
+
+### Open Items
+- [ ] Validate FAQ schema: https://search.google.com/test/rich-results
 
 ---
 

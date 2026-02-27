@@ -4,11 +4,10 @@
   "status": "active",
   "priority": "medium",
   "lastUpdated": "2026-02-26",
-  "lastSession": 10,
-  "currentFocus": "UX bug fixes: logarithmic balance slider, payment $ formatting, amortization table extra+pinned columns (green/purple), full-width table. All committed to main.",
+  "lastSession": 11,
+  "currentFocus": "CSV export overhauled: matches amortization table columns (extra+pinned), site metadata at top, filename updated to payoff.saltnfork.com-loan-amortization.csv.",
   "todos": [
-    { "id": 1, "text": "Validate FAQ schema at search.google.com/test/rich-results", "done": false },
-    { "id": 2, "text": "Push to origin/main", "done": false }
+    { "id": 1, "text": "Validate FAQ schema at search.google.com/test/rich-results", "done": false }
   ],
   "notes": "Single .html file, no dependencies. All CSS and JS inline. Currency via Intl.NumberFormat + navigator.language detection."
 }

@@ -2,7 +2,7 @@
 
 **Status:** Active — deployed, pending push to origin
 **URL:** https://payoff.saltnfork.com
-**Last Updated:** 2026-02-26 (Session 10)
+**Last Updated:** 2026-02-26 (Session 11)
 
 ---
 
@@ -67,6 +67,8 @@
 | **Session 10 — Amortization table extra payment columns (green)** | ✅ Done |
 | **Session 10 — Amortization table pinned scenario columns (purple)** | ✅ Done |
 | **Session 10 — Amortization table full-width (grid-column: 1/-1)** | ✅ Done |
+| **Session 11 — CSV export matches table columns (extra + pinned)** | ✅ Done |
+| **Session 11 — CSV metadata header (site URL, loan params, date)** | ✅ Done |
 
 ---
 
