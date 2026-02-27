@@ -8,7 +8,7 @@
 **Context:** FAQ section fully implemented as plain visible text, full-width. Ad slot also fixed for full-width. Playwright workflow established for visual verification.
 
 ### Pending Tasks
-- [ ] Validate at https://search.google.com/test/rich-results after deploying
+- [x] Validate at https://search.google.com/test/rich-results — ✅ 2 valid FAQ items + 1 SoftwareApplication detected (2026-02-27)
 
 ---
 

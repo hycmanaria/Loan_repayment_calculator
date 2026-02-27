@@ -5,9 +5,7 @@
   "priority": "medium",
   "lastUpdated": "2026-02-27",
   "lastSession": 14,
-  "currentFocus": "FAQ section added as visible plain text (full-width, single container). Ad slot prepped for full-width display.",
-  "todos": [
-    { "id": 1, "text": "Validate FAQ rich results at search.google.com/test/rich-results after deploying", "done": false }
-  ],
+  "currentFocus": "FAQ rich results validated — 2 valid FAQ items + 1 SoftwareApplication detected by Google.",
+  "todos": [],
   "notes": "Single .html file, no dependencies. All CSS and JS inline. Currency via Intl.NumberFormat + navigator.language detection. Playwright path: /home/ub-rissa/.npm/_npx/e41f203b7505f1fb/node_modules/playwright"
 }
