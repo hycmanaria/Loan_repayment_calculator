@@ -2,7 +2,7 @@
 
 **Status:** Active — deployed, pending push to origin
 **URL:** https://payoff.saltnfork.com
-**Last Updated:** 2026-02-25 (Session 9)
+**Last Updated:** 2026-02-26 (Session 10)
 
 ---
 
@@ -62,6 +62,11 @@
 | **Session 8 — Bi-weekly gap fix** | ✅ Done |
 | **Session 9 — FAQ structured data (FAQPage JSON-LD, 5 Q&As)** | ✅ Done |
 | **Session 9 — Pay Off By Date (reverse calculator)** | ✅ Done |
+| **Session 10 — Balance slider logarithmic scale (no more $50k jumps)** | ✅ Done |
+| **Session 10 — Monthly payment $ prefix + comma/decimal formatting** | ✅ Done |
+| **Session 10 — Amortization table extra payment columns (green)** | ✅ Done |
+| **Session 10 — Amortization table pinned scenario columns (purple)** | ✅ Done |
+| **Session 10 — Amortization table full-width (grid-column: 1/-1)** | ✅ Done |
 
 ---
 
@@ -69,10 +74,10 @@
 
 ```
 Loan_repayment_calculator/
-├── index.html          ← Full app (single file, ~2607 lines)
+├── index.html          ← Full app (single file, ~2800+ lines)
 ├── favicon.svg         ← Path-based dollar sign icon
 ├── og-image.html       ← Screenshot template for og-image.png
-├── og-image.png        ← ⚠️ TODO: user must generate from og-image.html
+├── og-image.png        ← Generated from og-image.html
 ├── sitemap.xml
 ├── robots.txt
 ├── manifest.json       ← PWA manifest

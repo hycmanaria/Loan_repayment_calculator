@@ -4,11 +4,117 @@
 
 ## 🔄 Next Session - Start Here
 
-**Last session:** 2026-02-25 (Session 9)
-**Context:** FAQ structured data + Pay Off By Date (reverse calculator) added and pushed to main. og-image.png already created.
+**Last session:** 2026-02-26 (Session 10)
+**Context:** 4 UX bug fixes + amortization table overhaul. All changes committed to main, ready to push.
 
 ### Pending Tasks
 - [ ] Validate FAQ schema at https://search.google.com/test/rich-results
+- [ ] Push to origin/main (`git push origin main`)
+
+---
+
+## Session: 2026-02-26 (Session 10) — UX Bug Fixes + Amortization Table Overhaul
+
+### What Was Done
+- Fixed balance slider sensitivity (logarithmic scale — was jumping $50k+ per pixel)
+- Fixed monthly payment input: added `$` prefix, comma+decimal formatting, fixed `parseFloat` comma bug
+- Overhauled amortization table: now shows extra payment columns (green) and pinned scenario columns (purple)
+- Made amortization table full-width (no more horizontal scroll)
+- Fixed hash URL restoration for balance slider (was clamping to max)
+- Renamed and fixed pinned scenario column data (was showing full payment, now shows extra-only for consistency)
+- Ran full 51-test Playwright suite — all passed
+
+### Files Modified
+- `index.html` — all changes below
+
+### Decisions Made
+
+**Balance slider logarithmic scale:**
+- Old: `min="500" max="2000000" step="1000"` → 1px ≈ $6,600 drag
+- New: `min="0" max="1000" step="1"` with log mapping: `balFromSlider(v) = Math.round(500 * Math.pow(4000, v / 1000))` and `sliderFromBal(b) = Math.round(1000 * Math.log(b / 500) / Math.log(4000))`
+- Default $20k → slider position 445 (44.5% of width)
+- Custom IIFE replaces `linkPairText()` for balance (log mapping incompatible with linear `linkPairText`)
+- Hash restoration: changed `set('b', 'balance', 'balanceSlider', ...)` to `set('b', 'balance', null, ...)` then manually set slider with `sliderFromBal()`
+
+**Payment input formatting:**
+- Changed `type="number"` → `type="text" inputmode="decimal"`
+- Wrapped in `.input-prefix-wrap` div with `<span class="input-prefix">$</span>`
+- Added `formatCommaDec(n)` helper (2 decimal places, locale commas) — separate from `formatComma` which rounds to whole numbers
+- Old `parseFloat(this.value)` → `parseComma(this.value)` (fixes silent truncation at comma: "1,500" → 1)
+- Focus handler strips commas; blur reformats
+
+**Amortization table — extra + saved columns:**
+- `buildTable(currentRows, extraLength)` → `buildTable(currentRows, extraRows, savedRows)` (pass full arrays, not lengths)
+- Dynamic thead rebuilt on every call
+- Green class `extra-col`: `--success` palette (matches summary table green)
+- Purple class `saved-col`: `#7c3aed` / `#f5f3ff` (matches Pin button purple)
+- "Pinned Extra" column shows extra-over-base (not full payment) — consistent with green "Extra Pmt"
+- `grid-column: 1 / -1` on `.table-actions` and `.table-wrap` → full-width, no horizontal scroll
+
+### Key Code Added
+
+**New helpers (after `parseComma`):**
+```javascript
+function formatCommaDec(n) { return (+n).toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2}); }
+function balFromSlider(v) { return Math.round(500 * Math.pow(4000, v / 1000)); }
+function sliderFromBal(b) { return Math.round(1000 * Math.log(b / 500) / Math.log(4000)); }
+```
+
+**Balance IIFE (replaces `linkPairText('balance', ...)`):**
+```javascript
+(function setupBalanceInput() {
+  const inp = document.getElementById('balance');
+  const sld = document.getElementById('balanceSlider');
+  inp.addEventListener('input', () => {
+    const v = parseComma(inp.value);
+    if (!v) return;
+    S.balance = v;
+    sld.value = sliderFromBal(Math.min(Math.max(v, 500), 2000000));
+    setFill(sld); recalc();
+  });
+  inp.addEventListener('focus', () => { inp.value = S.balance; });
+  inp.addEventListener('blur',  () => { inp.value = formatComma(S.balance); });
+  sld.addEventListener('input', () => {
+    const b = balFromSlider(parseFloat(sld.value));
+    inp.value = formatComma(b); setFill(sld);
+    S.balance = b; recalc();
+  });
+  inp.value = formatComma(S.balance);
+  sld.value = sliderFromBal(S.balance);
+  setFill(sld);
+})();
+```
+
+**Payment IIFE (replaces old `addEventListener('input', ...)`):**
+```javascript
+(function setupPaymentInput() {
+  const paymentEl = document.getElementById('payment');
+  paymentEl.addEventListener('input', function () {
+    const v = parseComma(this.value);
+    if (isNaN(v) || v <= 0) return;
+    const diff = Math.abs(v - S.calcPayment);
+    if (diff > 0.01) {
+      S.paymentOverridden = true;
+      S.manualPayment = v;
+    } else {
+      S.paymentOverridden = false;
+    }
+    recalc();
+  });
+  paymentEl.addEventListener('focus', function () {
+    const raw = parseComma(this.value);
+    if (raw) this.value = raw.toFixed(2);
+  });
+  paymentEl.addEventListener('blur', function () {
+    const raw = parseComma(this.value);
+    if (raw) this.value = formatCommaDec(raw);
+  });
+})();
+```
+
+### Open Items
+- [ ] Push to origin/main: `git push origin main`
+- [ ] Validate FAQ schema: https://search.google.com/test/rich-results
 
 ### Key Files to Reference
 - `index.html` — full app (~2800+ lines), all CSS + JS inline
