@@ -1159,6 +1159,32 @@
     </div>
     <div class="inputs-body">
 
+      <!-- Loan Start Date -->
+      <div class="field">
+        <div class="field-top">
+          <label>Loan Start Date</label>
+        </div>
+        <div class="date-row">
+          <select id="startMonth" class="date-select" aria-label="Loan start month">
+            <option value="1">January</option>
+            <option value="2">February</option>
+            <option value="3">March</option>
+            <option value="4">April</option>
+            <option value="5">May</option>
+            <option value="6">June</option>
+            <option value="7">July</option>
+            <option value="8">August</option>
+            <option value="9">September</option>
+            <option value="10">October</option>
+            <option value="11">November</option>
+            <option value="12">December</option>
+          </select>
+          <select id="startYear" class="date-select" aria-label="Loan start year">
+            <!-- Options populated by JS -->
+          </select>
+        </div>
+      </div>
+
       <!-- Loan Balance -->
       <div class="field">
         <div class="field-top">
@@ -1230,32 +1256,6 @@
         </div>
       </div>
 
-      <!-- Loan Start Date -->
-      <div class="field">
-        <div class="field-top">
-          <label>Loan Start Date</label>
-        </div>
-        <div class="date-row">
-          <select id="startMonth" class="date-select" aria-label="Loan start month">
-            <option value="1">January</option>
-            <option value="2">February</option>
-            <option value="3">March</option>
-            <option value="4">April</option>
-            <option value="5">May</option>
-            <option value="6">June</option>
-            <option value="7">July</option>
-            <option value="8">August</option>
-            <option value="9">September</option>
-            <option value="10">October</option>
-            <option value="11">November</option>
-            <option value="12">December</option>
-          </select>
-          <select id="startYear" class="date-select" aria-label="Loan start year">
-            <!-- Options populated by JS -->
-          </select>
-        </div>
-      </div>
-
       <!-- Extra Payment -->
       <div class="field">
         <div class="field-top">
@@ -1279,19 +1279,6 @@
             <option value="yearly">year</option>
           </select>
         </div>
-      </div>
-
-      <!-- Bi-weekly payments -->
-      <div class="field">
-        <div style="display:flex; align-items:center; gap:8px;">
-          <button id="biweeklyBtn" class="biweekly-btn" role="switch" aria-checked="false" type="button">
-            <span class="biweekly-track"><span class="biweekly-thumb"></span></span>
-            Pay bi-weekly
-          </button>
-          <button class="tip" type="button" tabindex="0"
-            data-tip="Instead of one monthly payment, you split it in half and pay every 2 weeks — 26 payments/year. That's equivalent to 13 monthly payments instead of 12, paying off your loan faster at no extra monthly cost.">ⓘ</button>
-        </div>
-        <div class="biweekly-sub" id="biweeklySub"></div>
       </div>
 
       <!-- One-time lump sum payment -->
@@ -1325,6 +1312,19 @@
           <span id="targetMsg"></span>
           <button id="targetApplyBtn" type="button" hidden>Apply</button>
         </div>
+      </div>
+
+      <!-- Bi-weekly payments -->
+      <div class="field">
+        <div style="display:flex; align-items:center; gap:8px;">
+          <button id="biweeklyBtn" class="biweekly-btn" role="switch" aria-checked="false" type="button">
+            <span class="biweekly-track"><span class="biweekly-thumb"></span></span>
+            Pay bi-weekly
+          </button>
+          <button class="tip" type="button" tabindex="0"
+            data-tip="Instead of one monthly payment, you split it in half and pay every 2 weeks — 26 payments/year. That's equivalent to 13 monthly payments instead of 12, paying off your loan faster at no extra monthly cost.">ⓘ</button>
+        </div>
+        <div class="biweekly-sub" id="biweeklySub"></div>
       </div>
 
     </div><!-- /inputs-body -->

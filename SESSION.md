@@ -4,10 +4,46 @@
 
 ## 🔄 Next Session - Start Here
 
-**Last session:** 2026-02-27 (Session 16)
-**Context:** Short link feature shipped and confirmed working. FAQ rich results validated. No pending tasks — waiting on user feedback.
+**Last session:** 2026-02-28 (Session 17)
+**Context:** Reorganized left panel input order for better UX flow. No pending tasks.
 
 ### Pending Tasks
+- None
+
+---
+
+## Session: 2026-02-28 (Session 17) — Left Panel Input Reorganization
+
+### What Was Done
+- Reorganized the left panel input fields in `index.html` for better logical flow
+- Moved Loan Start Date from position 5 to position 1 (top of inputs)
+- Moved Pay bi-weekly toggle from position 7 to position 9 (bottom of inputs)
+- Extra Payment now sits directly below Monthly Payment (logically paired)
+
+### Files Modified
+- `index.html` — Reordered `<div class="field">` blocks inside `.inputs-body`:
+  - Cut Loan Start Date block and pasted as first child of `.inputs-body`
+  - Cut Bi-weekly payments block and pasted as last child of `.inputs-body`
+  - No CSS or JS changes needed (all bindings are by element ID)
+
+### Decisions Made
+- **Start Date at top:** Sets temporal context for the loan; lightweight field (2 dropdowns) that doesn't create friction
+- **Extra Payment below Monthly Payment:** These are logically paired — "what you pay" + "what extra you add." Previously separated by Start Date
+- **Biweekly at bottom:** Niche strategy but kept visible (not collapsible) as a discovery moment — users scrolling down may think "wait, I can do that?" and ask their bank about it
+- **No collapsible for biweekly:** User explicitly wants it visible to encourage discovery, not hidden behind a `<details>` toggle
+
+### New input order:
+1. Loan Start Date
+2. Loan Balance
+3. Annual Interest Rate
+4. Loan Term
+5. Monthly Payment
+6. Extra Payment
+7. One-time Lump Sum Payment
+8. Pay off by
+9. Pay bi-weekly
+
+### Open Items
 - None
 
 ---
